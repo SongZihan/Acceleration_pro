@@ -89,6 +89,22 @@
                     }
                 }
             }
+        },
+        "nativePlugins" : {
+            "DC-StepCounter" : {
+                "__plugin_info__" : {
+                    "name" : "（Android）计步器",
+                    "description" : "计步器 第二天重置步数。",
+                    "platforms" : "Android",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=119",
+                    "android_package_name" : "uni.UNIC4311EB",
+                    "ios_bundle_id" : "",
+                    "isCloud" : true,
+                    "bought" : 1,
+                    "pid" : "119",
+                    "parameters" : {}
+                }
+            }
         }
     },
     "quickapp" : {},

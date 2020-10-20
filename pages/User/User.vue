@@ -11,13 +11,19 @@
 					<u-form-item label="name">
 						<u-input v-model="form.name" placeholder="Please enter context" />
 					</u-form-item>
-					<u-form-item label="전공">
-						<u-input v-model="form.intro" placeholder="Please enter context" />
+					<u-form-item label="Height">
+						<u-input v-model="form.height" placeholder="Please enter context" />
 					</u-form-item>
-					<u-form-item label="학번">
+					<u-form-item label="Age">
+						<u-input v-model="form.age" placeholder="Please enter context" />
+					</u-form-item>
+					<u-form-item label="Weight">
+						<u-input v-model="form.weight" placeholder="Please enter context" />
+					</u-form-item>
+					<u-form-item label="Student ID">
 						<u-input v-model="form.student_number" placeholder="Please enter context" />
 					</u-form-item>
-					<u-form-item label="성별">
+					<u-form-item label="Gender">
 						<u-radio-group v-model="form.sex">
 							<u-radio v-for="(item, index) in radioList" :key="index" :name="item.name" :disabled="item.disabled">
 								{{ item.name }}
@@ -60,16 +66,19 @@
 			return {
 				form: {
 					name: '',
-					intro: '',
+					gender: '',
 					sex: '',
-					student_number: ''
+					student_number: '',
+					weight:'',
+					height:'',
+					age:''
 				},
 				radioList: [{
-						name: '남',
+						name: 'man',
 						disabled: false
 					},
 					{
-						name: '여',
+						name: 'woman',
 						disabled: false
 					}
 				],
@@ -130,7 +139,9 @@
 					uni.setStorage({
 						key: this.form.name,
 						data: {
-							'intro': this.form.intro,
+							'age': this.form.age,
+							'height': this.form.height,
+							'weight': this.form.weight,
 							'sex': this.form.sex,
 							'student_number': this.form.student_number
 						},

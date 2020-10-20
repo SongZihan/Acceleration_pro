@@ -63,11 +63,14 @@
 	export default {
 		data() {
 			return {
+				init_step: '',
+				step_list:[],
 				local_x: [],
 				local_y: [],
 				local_z: [],
 				local_time: [],
 				inerval_id: '',
+				interval_cache: 0,
 				user_id: '',
 				start_button: true,
 				end_button: false,
@@ -83,7 +86,18 @@
 				success: (res)=>{
 					this.user = res.data;
 				}
-			})
+		})},
+		onUnload:function(option){
+			console.log('now unload app')
+			clearInterval(this.inerval_id)
+			// clear cache
+			this.local_x = []
+			this.local_y = []
+			this.local_z = []
+			this.local_time = []
+			this.step_list = []
+			this.init_step = ''
+			this.interval_cache = 0
 		},
 		methods: {
 			stop_listen() {
@@ -109,6 +123,9 @@
 				this.local_y = []
 				this.local_z = []
 				this.local_time = []
+				this.step_list = []
+				this.init_step = ''
+				this.interval_cache = 0
 			},
 			start_listen(sec) {
 				this.$refs.uToast.show({
@@ -119,26 +136,110 @@
 				this.start_button = false
 				this.save_button = false
 				const self = this
+				// 首先获取开始时间
+				var myDate = new Date()
+				// self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
+				console.log('start listen')
+				
+				
+				// 计步器
+				// 注册计步器
+				var step = uni.requireNativePlugin('DC-StepCounter');
+				// 注册globalEvent
+				var globalEvent = uni.requireNativePlugin('globalEvent');
+				// 计步器
+				// 监听globalEvent事件 StepCounter_Ready 在ready后调用计步器相关API
+				globalEvent.addEventListener("StepCounter_Ready", function (e) {
+						step.getCurrentTimeSportStep(function(n) {
+						    self.init_step = n
+							console.log('init step is ---',n)
+						})
+				});
+				//调用初始化 先注册StepCounter_Ready事件 再调用initialize初始化 防止StepCounter_Ready事件丢失
+				step.initialize();
+				// 获取初始步数
+				
+				
+				
 				this.inerval_id = setInterval(() => {
+					
+					console.log('Interval is running')
+					
+					
+					
 					plus.accelerometer.getCurrentAcceleration(function(a) {
-						var myDate = new Date()
-						self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
+						console.log('x data is ' + a.xAxis)
 						self.local_x.push(a.xAxis)
 						self.local_y.push(a.yAxis)
 						self.local_z.push(a.zAxis)
 					})
+					
+					if(sec === 60000){
+						// 计步器 60s 的情况
+						step.getCurrentTimeSportStep(function(n) {
+							self.step_list.push( n - self.init_step )
+							console.log('走了'+n+'步');
+							self.init_step = n
+						})
+						// 每次导入数据的时候物理性+1s 时间属性
+						myDate.setSeconds(myDate.getSeconds()+60)
+						self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
+						console.log('now time is ' + self.local_time[self.local_time.length-1])
+						
+					}else if( sec === 30000){
+						// 30 秒的情况
+						// 每次导入数据的时候物理性+1s 时间属性
+						myDate.setSeconds(myDate.getSeconds()+30)
+						self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
+						console.log('now time is ' + self.local_time[self.local_time.length-1])
+						
+						if(Math.round(self.interval_cache % 60) === 0){
+							step.getCurrentTimeSportStep(function(n) {
+								self.step_list.push( n - self.init_step  )
+								console.log('走了'+n+'步');
+								self.init_step = n
+							})
+							self.interval_cache = self.interval_cache + 30
+						}else{
+							self.step_list.push( '' )
+							self.interval_cache = self.interval_cache + 30
+						}
+					}else{
+						// 每次导入数据的时候物理性+1s 时间属性
+						myDate.setSeconds(myDate.getSeconds()+1)
+						self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
+						console.log('now time is ' + self.local_time[self.local_time.length-1])
+						
+						// 1 秒的情况
+						if(Math.round(self.interval_cache % 60) === 0){
+							step.getCurrentTimeSportStep(function(n) {
+								self.step_list.push( n - self.init_step  )
+								console.log('走了'+n+'步');
+								self.init_step = n
+							})
+							self.interval_cache = self.interval_cache + 1
+						}else{
+							self.step_list.push( '' )
+							self.interval_cache = self.interval_cache + 1
+						}
+					}
+					console.log("========" + self.step_list)
+					
+					
 				}, parseInt(sec))
+				
+				
 			},
 			save_file() {
 				// 表头
-				var header = "" + "userName" + "," + "major" + "," + "number" + "," + "sex" + "\r\n"
-				var acc_file = header + "" + this.user_id +"," + this.user.intro + ","+ this.user.student_number +"," + this.user.sex + "\r\n" + "x,y,z,time\r\n"
+				var header = "" + "userName" + "," + "Student number" + ","+"Age" + ","+ "Gender" +"," + "Weight"+"," + "Height"+ "\r\n"
+				var acc_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
 				// 时间节点
 				var myDate = new Date()
 				var now_time = "" + myDate.getMonth() + "-" + myDate.getDate() + "-" + myDate.getHours() + "-" + myDate.getMinutes()
 				// 循环赋值，生成csv格式的文件
 				for (var i = 0; i < this.local_time.length; i++) {
-					acc_file += this.local_x[i] + "," + this.local_y[i] + "," + this.local_z[i] + "," + this.local_time[i] + "\r\n"
+					acc_file += this.local_y[i] + "," + this.local_x[i] + "," + this.local_z[i] + ","+ this.step_list[i] + ","+ this.local_time[i] + "\r\n"
 				}
 				const self = this
 				console.log(plus.io.PUBLIC_DOCUMENTS)
