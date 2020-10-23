@@ -45,7 +45,13 @@
 				<u-button class="button_1" @click="stop_listen" :disabled="!end_button" size="medium">Stop listen</u-button>
 			</u-col>
 		</u-row>
-
+		
+		<u-row gutter="10" justify="around">
+			<u-col span="4">
+				<u-button class="button_1" @click="start_listen(33)" :disabled="!start_button" size="medium">Start 30 hz</u-button>
+			</u-col>
+		</u-row>
+		
 		<u-row gutter="10" justify="around">
 			<u-col span="4">
 				<u-button class="button_1" @click="save_file" :disabled="!save_button" size="medium">Save</u-button>
@@ -76,7 +82,8 @@
 				end_button: false,
 				save_button: false,
 				clear_button: true,
-				user : {}
+				user : {},
+				wid :''
 			}
 		},
 		onLoad: function(option) {
@@ -112,6 +119,9 @@
 				console.log('success stop Interval')
 				console.log(this.local_z)
 				console.log(this.local_time)
+				
+				// 关闭监听器
+				plus.accelerometer.clearWatch( this.wid )
 			},
 			clear() {
 				this.$refs.uToast.show({
@@ -159,74 +169,93 @@
 				step.initialize();
 				// 获取初始步数
 				
+				// 使用watch 监听
+				// 监听设备加速度变化
+				this.wid = plus.accelerometer.watchAcceleration( function ( a ) {
+					self.local_x.push(a.xAxis)
+					self.local_y.push(a.yAxis)
+					self.local_z.push(a.zAxis)
+					self.step_list.push("")
+					self.local_time.push("")
+				}, function ( e ) {
+					plus.nativeUI.alert("watchAcceleration error: " + JSON.stringify(e)); 
+				}, {frequency:33}); // 设置更新间隔时间为33ms
 				
 				
-				this.inerval_id = setInterval(() => {
+				
+				
+				
+				// this.inerval_id = setInterval(() => {
 					
-					console.log('Interval is running')
+				// 	console.log('Interval is running')
 					
+				// 	plus.accelerometer.getCurrentAcceleration(function(a) {
+				// 		console.log('x data is ' + a.xAxis)
+				// 		self.local_x.push(a.xAxis)
+				// 		self.local_y.push(a.yAxis)
+				// 		self.local_z.push(a.zAxis)
+				// 	})
 					
+				// 	step.getCurrentTimeSportStep(function(n) {
+				// 		self.step_list.push( n - self.init_step )
+				// 		console.log('走了'+n+'步');
+				// 		self.init_step = n
+				// 	})
+				// 	self.local_time.push("")
 					
-					plus.accelerometer.getCurrentAcceleration(function(a) {
-						console.log('x data is ' + a.xAxis)
-						self.local_x.push(a.xAxis)
-						self.local_y.push(a.yAxis)
-						self.local_z.push(a.zAxis)
-					})
-					
-					if(sec === 60000){
-						// 计步器 60s 的情况
-						step.getCurrentTimeSportStep(function(n) {
-							self.step_list.push( n - self.init_step )
-							console.log('走了'+n+'步');
-							self.init_step = n
-						})
-						// 每次导入数据的时候物理性+1s 时间属性
-						myDate.setSeconds(myDate.getSeconds()+60)
-						self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
-						console.log('now time is ' + self.local_time[self.local_time.length-1])
+				// 	// if(sec === 60000){
+				// 	// 	// 计步器 60s 的情况
+				// 	// 	step.getCurrentTimeSportStep(function(n) {
+				// 	// 		self.step_list.push( n - self.init_step )
+				// 	// 		console.log('走了'+n+'步');
+				// 	// 		self.init_step = n
+				// 	// 	})
+				// 	// 	// 每次导入数据的时候物理性+1s 时间属性
+				// 	// 	myDate.setSeconds(myDate.getSeconds()+60)
+				// 	// 	self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
+				// 	// 	console.log('now time is ' + self.local_time[self.local_time.length-1])
 						
-					}else if( sec === 30000){
-						// 30 秒的情况
-						// 每次导入数据的时候物理性+1s 时间属性
-						myDate.setSeconds(myDate.getSeconds()+30)
-						self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
-						console.log('now time is ' + self.local_time[self.local_time.length-1])
+				// 	// }else if( sec === 30000){
+				// 	// 	// 30 秒的情况
+				// 	// 	// 每次导入数据的时候物理性+1s 时间属性
+				// 	// 	myDate.setSeconds(myDate.getSeconds()+30)
+				// 	// 	self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
+				// 	// 	console.log('now time is ' + self.local_time[self.local_time.length-1])
 						
-						if(Math.round(self.interval_cache % 60) === 0){
-							step.getCurrentTimeSportStep(function(n) {
-								self.step_list.push( n - self.init_step  )
-								console.log('走了'+n+'步');
-								self.init_step = n
-							})
-							self.interval_cache = self.interval_cache + 30
-						}else{
-							self.step_list.push( '' )
-							self.interval_cache = self.interval_cache + 30
-						}
-					}else{
-						// 每次导入数据的时候物理性+1s 时间属性
-						myDate.setSeconds(myDate.getSeconds()+1)
-						self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
-						console.log('now time is ' + self.local_time[self.local_time.length-1])
+				// 	// 	if(Math.round(self.interval_cache % 60) === 0){
+				// 	// 		step.getCurrentTimeSportStep(function(n) {
+				// 	// 			self.step_list.push( n - self.init_step  )
+				// 	// 			console.log('走了'+n+'步');
+				// 	// 			self.init_step = n
+				// 	// 		})
+				// 	// 		self.interval_cache = self.interval_cache + 30
+				// 	// 	}else{
+				// 	// 		self.step_list.push( '' )
+				// 	// 		self.interval_cache = self.interval_cache + 30
+				// 	// 	}
+				// 	// }else{
+				// 	// 	// 每次导入数据的时候物理性+1s 时间属性
+				// 	// 	myDate.setSeconds(myDate.getSeconds()+1)
+				// 	// 	self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
+				// 	// 	console.log('now time is ' + self.local_time[self.local_time.length-1])
 						
-						// 1 秒的情况
-						if(Math.round(self.interval_cache % 60) === 0){
-							step.getCurrentTimeSportStep(function(n) {
-								self.step_list.push( n - self.init_step  )
-								console.log('走了'+n+'步');
-								self.init_step = n
-							})
-							self.interval_cache = self.interval_cache + 1
-						}else{
-							self.step_list.push( '' )
-							self.interval_cache = self.interval_cache + 1
-						}
-					}
-					console.log("========" + self.step_list)
+				// 	// 	// 1 秒的情况
+				// 	// 	if(Math.round(self.interval_cache % 60) === 0){
+				// 	// 		step.getCurrentTimeSportStep(function(n) {
+				// 	// 			self.step_list.push( n - self.init_step  )
+				// 	// 			console.log('走了'+n+'步');
+				// 	// 			self.init_step = n
+				// 	// 		})
+				// 	// 		self.interval_cache = self.interval_cache + 1
+				// 	// 	}else{
+				// 	// 		self.step_list.push( '' )
+				// 	// 		self.interval_cache = self.interval_cache + 1
+				// 	// 	}
+				// 	// }
+				// 	// console.log("========" + self.step_list)
 					
 					
-				}, parseInt(sec))
+				// }, parseInt(sec))
 				
 				
 			},
