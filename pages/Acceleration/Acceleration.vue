@@ -69,21 +69,22 @@
 	export default {
 		data() {
 			return {
-				init_step: '',
+				init_step: 0,
 				step_list:[],
 				local_x: [],
 				local_y: [],
 				local_z: [],
 				local_time: [],
-				inerval_id: '',
-				interval_cache: 0,
 				user_id: '',
 				start_button: true,
 				end_button: false,
 				save_button: false,
 				clear_button: true,
 				user : {},
-				wid :''
+				wid :'',
+				golbal_event:{
+					step:''
+				}
 			}
 		},
 		onLoad: function(option) {
@@ -94,17 +95,37 @@
 					this.user = res.data;
 				}
 		})},
-		onUnload:function(option){
+		mounted() {
+			var self = this
+			// 计步器
+			// 注册计步器
+			var step = uni.requireNativePlugin('DC-StepCounter');
+			// 注册globalEvent
+			var globalEvent = uni.requireNativePlugin('globalEvent');
+			// 计步器
+			// 监听globalEvent事件 StepCounter_Ready 在ready后调用计步器相关API
+			globalEvent.addEventListener("StepCounter_Ready", function (e) {
+					step.getCurrentTimeSportStep(function(n) {
+					    self.init_step = n
+						console.log('init step is ---',n)
+					})
+			});
+			//调用初始化 先注册StepCounter_Ready事件 再调用initialize初始化 防止StepCounter_Ready事件丢失
+			step.initialize()
+			// 绑定data变量以在其他方法中调用
+			this.golbal_event.step = step
+		},
+		beforeDestroy(){
 			console.log('now unload app')
-			clearInterval(this.inerval_id)
 			// clear cache
 			this.local_x = []
 			this.local_y = []
 			this.local_z = []
 			this.local_time = []
 			this.step_list = []
-			this.init_step = ''
+			this.init_step = 0
 			this.interval_cache = 0
+			
 		},
 		methods: {
 			stop_listen() {
@@ -134,10 +155,10 @@
 				this.local_z = []
 				this.local_time = []
 				this.step_list = []
-				this.init_step = ''
+				this.init_step = 0
 				this.interval_cache = 0
 			},
-			start_listen(sec) {
+			start_listen(milisec) {
 				this.$refs.uToast.show({
 									title: 'start listen~',
 									type: 'success'
@@ -152,34 +173,38 @@
 				console.log('start listen')
 				
 				
-				// 计步器
-				// 注册计步器
-				var step = uni.requireNativePlugin('DC-StepCounter');
-				// 注册globalEvent
-				var globalEvent = uni.requireNativePlugin('globalEvent');
-				// 计步器
-				// 监听globalEvent事件 StepCounter_Ready 在ready后调用计步器相关API
-				globalEvent.addEventListener("StepCounter_Ready", function (e) {
-						step.getCurrentTimeSportStep(function(n) {
-						    self.init_step = n
-							console.log('init step is ---',n)
-						})
-				});
-				//调用初始化 先注册StepCounter_Ready事件 再调用initialize初始化 防止StepCounter_Ready事件丢失
-				step.initialize();
-				// 获取初始步数
 				
-				// 使用watch 监听
-				// 监听设备加速度变化
+				// 获取初始步数
+				self.golbal_event.step.getCurrentTimeSportStep(function(n) {
+					self.init_step = n
+				})
+				// 计步器时间缓存
+				var step_time_cache = 0
+				// 使用watch 监听设备加速度变化
 				this.wid = plus.accelerometer.watchAcceleration( function ( a ) {
 					self.local_x.push(a.xAxis)
 					self.local_y.push(a.yAxis)
 					self.local_z.push(a.zAxis)
-					self.step_list.push("")
-					self.local_time.push("")
+					// 计入步数 
+					if(step_time_cache < 60000){
+						step_time_cache = step_time_cache + milisec
+						self.step_list.push( "" )
+					}else{
+					
+						self.golbal_event.step.getCurrentTimeSportStep(function(n) {
+							self.step_list.push( n - self.init_step )
+							console.log('走了'+n+'步');
+							self.init_step = n
+						})
+						step_time_cache = 0
+					}
+					
+					// 计入时间
+					myDate.setMilliseconds(myDate.getMilliseconds()+milisec)
+					self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds() + ":" + myDate.getMilliseconds())
 				}, function ( e ) {
 					plus.nativeUI.alert("watchAcceleration error: " + JSON.stringify(e)); 
-				}, {frequency:33}); // 设置更新间隔时间为33ms
+				}, {frequency:milisec}); // 设置更新间隔时间为 milisec ms
 				
 				
 				
