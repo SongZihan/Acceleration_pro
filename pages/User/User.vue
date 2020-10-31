@@ -97,9 +97,8 @@
 			};
 		},
 		onShow: function() {
-			const res = uni.getStorageInfoSync()
-			this.user_list = res.keys
-			console.log(this.user_list)
+			// 排除其他HAcceleration存储key
+			this.user_list =  plus.storage.getAllKeys().filter(item => item.slice(0,13) !== 'HAcceleration')
 			this.list = []
 			for (var i = 0; i < this.user_list.length; i++) {
 				this.list.push({

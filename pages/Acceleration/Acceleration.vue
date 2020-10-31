@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<u-row gutter="10" justify="center" class="first_line">
+		<!-- <u-row gutter="10" justify="center" class="first_line">
 			<u-col span="1">
 				X:
 			</u-col>
@@ -18,15 +18,15 @@
 				 :striped-active="true" :show-percent="false"></u-line-progress>
 			</u-col>
 		</u-row>
-		<u-row gutter="10" justify="center" class="last_line">
-			<u-col span="1">
+		<u-row gutter="10" justify="center" class="last_line"> -->
+		<!-- 	<u-col span="1">
 				Z:
 			</u-col>
 			<u-col span="10">
 				<u-line-progress class="progress_line" :striped="true" :percent="local_z[local_z.length-1]/10 * 100"
 				 :striped-active="true" :show-percent="false"></u-line-progress>
 			</u-col>
-		</u-row>
+		</u-row> -->
 
 		<u-row gutter="10" justify="around">
 			<u-col span="4">
@@ -59,14 +59,14 @@
 			<u-col span="4">
 				<u-button class="button_1" @click="start_listen(1)" :disabled="!start_button" size="medium">Start 100 hz</u-button>
 			</u-col>
+			<u-col span="4">
+				<u-button class="button_1" @click="delete_cache"  size="medium">Delete Cache</u-button>
+			</u-col>
 		</u-row>
 		
 		<u-row gutter="10" justify="around">
 			<u-col span="4">
-				<u-button class="button_1" @click="save_file" :disabled="!save_button" size="medium">Save</u-button>
-			</u-col>
-			<u-col span="4">
-				<u-button class="button_1" @click="clear" :disabled="!clear_button" size="medium">Clear data</u-button>
+				<u-button class="button_1" @click="export_file"  size="medium">Export File</u-button>
 			</u-col>
 		</u-row>
 		<u-toast ref="uToast" />
@@ -75,15 +75,16 @@
 </template>
 
 <script>
+	import {add_a_row,now_date,file_writer,get_files} from './helper.js'
 	export default {
 		data() {
 			return {
 				init_step: 0,
 				step_list:[],
-				local_x: [],
-				local_y: [],
-				local_z: [],
-				local_time: [],
+				local_x: '',
+				local_y: '',
+				local_z: '',
+				local_time: '',
 				user_id: '',
 				start_button: true,
 				end_button: false,
@@ -147,25 +148,9 @@
 									type: 'success'
 								})
 				console.log('success stop Interval')
-				console.log(this.local_z)
-				console.log(this.local_time)
 				
 				// 关闭监听器
 				plus.accelerometer.clearWatch( this.wid )
-			},
-			clear() {
-				this.$refs.uToast.show({
-									title: 'Successfully clear cache',
-									type: 'success'
-								})
-				// clear cache
-				this.local_x = []
-				this.local_y = []
-				this.local_z = []
-				this.local_time = []
-				this.step_list = []
-				this.init_step = 0
-				this.interval_cache = 0
 			},
 			start_listen(milisec) {
 				this.$refs.uToast.show({
@@ -190,146 +175,82 @@
 				// 计步器时间缓存
 				var step_time_cache = 0
 				// 使用watch 监听设备加速度变化
+				
+				//设置字符串缓存变量
+				var data_cache = ''
+				
 				this.wid = plus.accelerometer.watchAcceleration( function ( a ) {
-					self.local_x.push(a.xAxis)
-					self.local_y.push(a.yAxis)
-					self.local_z.push(a.zAxis)
 					// 计入步数 
 					if(step_time_cache < 60000){
 						step_time_cache = step_time_cache + milisec
-						self.step_list.push( "" )
+						// 拼接字符串
+						data_cache = data_cache + add_a_row(a.xAxis,a.yAxis,a.zAxis,'',myDate,milisec)
 					}else{
 					
 						self.golbal_event.step.getCurrentTimeSportStep(function(n) {
-							self.step_list.push( n - self.init_step )
-							console.log('走了'+n+'步');
+							// 计算一分钟内的所有步数
+							var step_per_minute = n - self.init_step 
+							// 拼接字符串
+							data_cache = data_cache + add_a_row(a.xAxis,a.yAxis,a.zAxis,step_per_minute,myDate,milisec)
 							self.init_step = n
 						})
 						step_time_cache = 0
 					}
+					// console.log(data_cache.length)
+					// 数据存储
+					if (data_cache.length >= 5000000 ){
+						// 当字符串长度大于7000000时，也就是存储大于60kb时
+						var storage_data = data_cache // 设置存储副本
+						data_cache = '' // 清空缓存
+						var key = 'HAcceleration/' + self.user_id + '/' + milisec +'/' +now_date() + '/' + Date.now() // 文件末尾加上时间戳以排序
+						
+						plus.storage.setItemAsync(key, storage_data, function(){
+							console.log("setItemAsync success")
+							storage_data = ''
+						}, function(e){
+							console.log("setItemAsync failed: "+JSON.stringify(e));
+						})
+					}
 					
-					// 计入时间
-					myDate.setMilliseconds(myDate.getMilliseconds()+milisec)
-					self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds() + ":" + myDate.getMilliseconds())
 				}, function ( e ) {
 					plus.nativeUI.alert("watchAcceleration error: " + JSON.stringify(e)); 
 				}, {frequency:milisec}); // 设置更新间隔时间为 milisec ms
-				
-				
-				
-				
-				
-				// this.inerval_id = setInterval(() => {
-					
-				// 	console.log('Interval is running')
-					
-				// 	plus.accelerometer.getCurrentAcceleration(function(a) {
-				// 		console.log('x data is ' + a.xAxis)
-				// 		self.local_x.push(a.xAxis)
-				// 		self.local_y.push(a.yAxis)
-				// 		self.local_z.push(a.zAxis)
-				// 	})
-					
-				// 	step.getCurrentTimeSportStep(function(n) {
-				// 		self.step_list.push( n - self.init_step )
-				// 		console.log('走了'+n+'步');
-				// 		self.init_step = n
-				// 	})
-				// 	self.local_time.push("")
-					
-				// 	// if(sec === 60000){
-				// 	// 	// 计步器 60s 的情况
-				// 	// 	step.getCurrentTimeSportStep(function(n) {
-				// 	// 		self.step_list.push( n - self.init_step )
-				// 	// 		console.log('走了'+n+'步');
-				// 	// 		self.init_step = n
-				// 	// 	})
-				// 	// 	// 每次导入数据的时候物理性+1s 时间属性
-				// 	// 	myDate.setSeconds(myDate.getSeconds()+60)
-				// 	// 	self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
-				// 	// 	console.log('now time is ' + self.local_time[self.local_time.length-1])
-						
-				// 	// }else if( sec === 30000){
-				// 	// 	// 30 秒的情况
-				// 	// 	// 每次导入数据的时候物理性+1s 时间属性
-				// 	// 	myDate.setSeconds(myDate.getSeconds()+30)
-				// 	// 	self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
-				// 	// 	console.log('now time is ' + self.local_time[self.local_time.length-1])
-						
-				// 	// 	if(Math.round(self.interval_cache % 60) === 0){
-				// 	// 		step.getCurrentTimeSportStep(function(n) {
-				// 	// 			self.step_list.push( n - self.init_step  )
-				// 	// 			console.log('走了'+n+'步');
-				// 	// 			self.init_step = n
-				// 	// 		})
-				// 	// 		self.interval_cache = self.interval_cache + 30
-				// 	// 	}else{
-				// 	// 		self.step_list.push( '' )
-				// 	// 		self.interval_cache = self.interval_cache + 30
-				// 	// 	}
-				// 	// }else{
-				// 	// 	// 每次导入数据的时候物理性+1s 时间属性
-				// 	// 	myDate.setSeconds(myDate.getSeconds()+1)
-				// 	// 	self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
-				// 	// 	console.log('now time is ' + self.local_time[self.local_time.length-1])
-						
-				// 	// 	// 1 秒的情况
-				// 	// 	if(Math.round(self.interval_cache % 60) === 0){
-				// 	// 		step.getCurrentTimeSportStep(function(n) {
-				// 	// 			self.step_list.push( n - self.init_step  )
-				// 	// 			console.log('走了'+n+'步');
-				// 	// 			self.init_step = n
-				// 	// 		})
-				// 	// 		self.interval_cache = self.interval_cache + 1
-				// 	// 	}else{
-				// 	// 		self.step_list.push( '' )
-				// 	// 		self.interval_cache = self.interval_cache + 1
-				// 	// 	}
-				// 	// }
-				// 	// console.log("========" + self.step_list)
-					
-					
-				// }, parseInt(sec))
+
 				
 				
 			},
-			save_file() {
+			export_file() {
 				// 表头
 				var header = "" + "userName" + "," + "Student number" + ","+"Age" + ","+ "Gender" +"," + "Weight"+"," + "Height"+ "\r\n"
 				var acc_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
 				// 时间节点
 				var myDate = new Date()
 				var now_time = "" + myDate.getMonth() + "-" + myDate.getDate() + "-" + myDate.getHours() + "-" + myDate.getMinutes()
-				// 循环赋值，生成csv格式的文件
-				for (var i = 0; i < this.local_time.length; i++) {
-					acc_file += this.local_y[i] + "," + this.local_x[i] + "," + this.local_z[i] + ","+ this.step_list[i] + ","+ this.local_time[i] + "\r\n"
-				}
+				
+				var final_file = get_files(acc_file,this.user_id)
+				
 				const self = this
 				console.log(plus.io.PUBLIC_DOCUMENTS)
-				plus.io.requestFileSystem(plus.io.PUBLIC_DOCUMENTS, function(fs) {
-					// fs.root是根目录操作对象DirectoryEntry
-					fs.root.getFile('acceleration' + '-' + self.user_id + "-" + now_time + '.csv', {
-						create: true
-					}, function(fileEntry) {
-						fileEntry.file(function(file) {
-							// create a FileWriter to write to the file
-							fileEntry.createWriter(function(writer) {
-								// Write data to file.
-								// 快速将文件指针转发到文件末尾
-								writer.seek(file.size - 1)
-								writer.write(acc_file)
-							}, function(e) {
-								console.log("Request file system failed: " + e.message)
-							})
-						})
-					})
-					
-				})
+				// 存储并导出文件
+				file_writer(this.user_id,now_time,final_file)
+				
 				this.$refs.uToast.show({
-									title: 'Successfully saved',
+									title: 'Successfully exported',
 									type: 'success'
 								})
-				console.log("writed")
+				console.log('success exported')
+			},
+			delete_cache(){
+				var keys = plus.storage.getAllKeys()
+				keys = keys.filter(item => item.slice(0,13) === 'HAcceleration')
+				for(var i in keys ){
+					plus.storage.removeItem(keys[i])
+				}
+				this.$refs.uToast.show({
+									title: 'Successfully deleted',
+									type: 'success'
+								})
+				console.log(plus.storage.getAllKeys())
 			}
 
 		}

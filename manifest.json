@@ -1,6 +1,6 @@
 {
     "name" : "HAcceleration",
-    "appid" : "__UNI__C4311EB",
+    "appid" : "__UNI__BBD03DC",
     "description" : "多平台快速开发的UI框架",
     "versionName" : "1.7.3",
     "versionCode" : "100",
@@ -97,7 +97,7 @@
                     "description" : "计步器 第二天重置步数。",
                     "platforms" : "Android",
                     "url" : "https://ext.dcloud.net.cn/plugin?id=119",
-                    "android_package_name" : "uni.UNIC4311EB",
+                    "android_package_name" : "",
                     "ios_bundle_id" : "",
                     "isCloud" : true,
                     "bought" : 1,
