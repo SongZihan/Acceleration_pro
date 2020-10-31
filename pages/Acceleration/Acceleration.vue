@@ -50,6 +50,15 @@
 			<u-col span="4">
 				<u-button class="button_1" @click="start_listen(33)" :disabled="!start_button" size="medium">Start 30 hz</u-button>
 			</u-col>
+			<u-col span="4">
+				<u-button class="button_1" @click="start_listen(16)" :disabled="!start_button" size="medium">Start 60 hz</u-button>
+			</u-col>
+		</u-row>
+		
+		<u-row gutter="10" justify="around">
+			<u-col span="4">
+				<u-button class="button_1" @click="start_listen(1)" :disabled="!start_button" size="medium">Start 100 hz</u-button>
+			</u-col>
 		</u-row>
 		
 		<u-row gutter="10" justify="around">
