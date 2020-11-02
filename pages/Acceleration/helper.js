@@ -49,27 +49,27 @@ export function now_date(){
 }
 
 
-export function file_writer(user_id,now_time,acc_file){
-	plus.io.requestFileSystem(plus.io.PUBLIC_DOCUMENTS, function(fs) {
-		// fs.root是根目录操作对象DirectoryEntry
-		fs.root.getFile('acceleration' + '-' + user_id + "-" + now_time + '.csv', {
-			create: true
-		}, function(fileEntry) {
-			fileEntry.file(function(file) {
-				// create a FileWriter to write to the file
-				fileEntry.createWriter(function(writer) {
-					// Write data to file.
-					// 快速将文件指针转发到文件末尾
-					writer.seek(file.size - 1)
-					writer.write(acc_file)
-				}, function(e) {
-					console.log("Request file system failed: " + e.message)
-				})
-			})
-		})
+// export function file_writer(user_id,now_time,acc_file){
+// 	plus.io.requestFileSystem(plus.io.PUBLIC_DOCUMENTS, function(fs) {
+// 		// fs.root是根目录操作对象DirectoryEntry
+// 		fs.root.getFile('acceleration' + '-' + user_id + "-" + now_time + '.csv', {
+// 			create: true
+// 		}, function(fileEntry) {
+// 			fileEntry.file(function(file) {
+// 				// create a FileWriter to write to the file
+// 				fileEntry.createWriter(function(writer) {
+// 					// Write data to file.
+// 					// 快速将文件指针转发到文件末尾
+// 					writer.seek(file.size - 1)
+// 					writer.write(acc_file)
+// 				}, function(e) {
+// 					console.log("Request file system failed: " + e.message)
+// 				})
+// 			})
+// 		})
 		
-	})
-}
+// 	})
+// }
 
 
 export function get_files(acc_file,user_id,date,self){
@@ -98,4 +98,53 @@ export function get_files(acc_file,user_id,date,self){
 		acc_file += plus.storage.getItem(sorted_keys[k])
 	}
 	return acc_file
+}
+
+export function file_writer(user_name,data,header){
+	// user_name 用户名，用来创建文件夹
+	// data 文件对象 字符串格式
+	// header 如果文件的长度为0则自动添加文件头
+	
+	// 获取当前时间
+	var date = now_date()
+	// 组装文件名
+	var file_name = date + '.csv'
+	
+	plus.io.resolveLocalFileSystemURL('_documents', function(entry) {
+		// 创建文件夹,如果不存在的话
+		entry.getDirectory(user_name,{create:true,exclusive:false},function(entry_success){
+			// 获取对应文件名的文件对象，如果没有就创建
+			entry_success.getFile(file_name,{create:true},
+			 function(file_entry){
+				 // 这里也有一层回调函数
+				 file_entry.file(function(file){
+					    // 创建文件读取器
+						var fileWriter = file_entry.createWriter(function(writer){
+							
+							writer.seek(file.size - 1)
+							// 如果文件的长度为0则自动添加文件头
+							if(file.size === 0){
+								writer.write(header)
+								writer.write(data)
+							}else{
+								// 向文件中写入一些实体,将文件指针调到文件末尾
+								writer.write(data)
+							}
+							
+					})
+				},function(e) {
+						console.log("Request file system failed: " + e.message)
+				})
+			},function(e){
+				console.log('failed' + e)
+			})
+			
+		},function(entry_fail){
+			console.log('Failed get diretory')
+		})
+	})
+}
+
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

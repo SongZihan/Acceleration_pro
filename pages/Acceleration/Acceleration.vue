@@ -44,6 +44,9 @@
 			<u-col span="4">
 				<u-button class="button_1" @click="stop_listen" :disabled="!end_button" size="medium">Stop listen</u-button>
 			</u-col>
+			<u-col span="4">
+				<u-button class="button_1" @click="test_diretory"  size="medium">test_diretory</u-button>
+			</u-col>
 		</u-row>
 		
 		<u-row gutter="10" justify="around">
@@ -89,7 +92,7 @@
 </template>
 
 <script>
-	import {add_a_row,now_date,file_writer,get_files} from './helper.js'
+	import {add_a_row,now_date,file_writer,get_files,sleep} from './helper.js'
 	export default {
 		data() {
 			return {
@@ -218,6 +221,10 @@
 				//设置字符串缓存变量
 				var data_cache = ''
 				
+				// 表头
+				var header = "" + "userName" + "," + "Student number" + ","+"Age" + ","+ "Gender" +"," + "Weight"+"," + "Height"+ "\r\n"
+				var header_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
+				
 				this.wid = plus.accelerometer.watchAcceleration( function ( a ) {
 					// 更新显示
 					self.local_x = a.xAxis
@@ -240,20 +247,13 @@
 						})
 						step_time_cache = 0
 					}
-					console.log(data_cache.length)
+					
 					// 数据存储
-					if (data_cache.length >= 500000 ){
+					if (data_cache.length >= 800000 ){
 						// 当字符串长度大于1000000时，也就是存储大于60kb时
 						var storage_data = data_cache // 设置存储副本
 						data_cache = '' // 清空缓存
-						var key = 'HAcceleration/' + self.user_id + '/' + milisec +'/' + now_date() + '/' + Date.now() // 文件末尾加上时间戳以排序
-						
-						plus.storage.setItemAsync(key, storage_data, function(){
-							console.log("setItemAsync success")
-							storage_data = ''
-						}, function(e){
-							console.log("setItemAsync failed: "+JSON.stringify(e));
-						})
+						file_writer(self.user_id,storage_data,header_file)
 					}
 					
 				}, function ( e ) {
@@ -298,7 +298,17 @@
 									type: 'success'
 								})
 				console.log(plus.storage.getAllKeys())
-			}
+			},
+			async test_diretory(){
+				for(var i = 0; i < 10; i++){
+					file_writer('songzihan' ,''+i+ '-- nihaoa\r\n','Header\r\n')
+					await sleep(100)
+				}
+				this.$refs.uToast.show({
+									title: 'Successfully writed',
+									type: 'success'
+								})
+			},
 			
 
 		}
