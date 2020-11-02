@@ -24,7 +24,9 @@
         "usingComponents" : true,
         "nvueCompiler" : "uni-app",
         "compilerVersion" : 3,
-        "modules" : {},
+        "modules" : {
+            "Push" : {}
+        },
         "distribute" : {
             "android" : {
                 "permissions" : [
@@ -55,7 +57,8 @@
             },
             "ios" : {},
             "sdkConfigs" : {
-                "ad" : {}
+                "ad" : {},
+                "push" : {}
             },
             "icons" : {
                 "android" : {
@@ -102,6 +105,20 @@
                     "isCloud" : true,
                     "bought" : 1,
                     "pid" : "119",
+                    "parameters" : {}
+                }
+            },
+            "HG-Background" : {
+                "__plugin_info__" : {
+                    "name" : "保活 前台运行",
+                    "description" : "用于提高app存活概率或添加前台显示 q群：219508489",
+                    "platforms" : "Android",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=2203",
+                    "android_package_name" : "uni.UNICBBD03DC",
+                    "ios_bundle_id" : "",
+                    "isCloud" : true,
+                    "bought" : 1,
+                    "pid" : "2203",
                     "parameters" : {}
                 }
             }

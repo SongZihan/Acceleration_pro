@@ -1,11 +1,11 @@
 <template>
 	<view>
-		<!-- <u-row gutter="10" justify="center" class="first_line">
+		<u-row gutter="10" justify="center" class="first_line">
 			<u-col span="1">
 				X:
 			</u-col>
 			<u-col span="10">
-				<u-line-progress class="progress_line" :striped="true" :percent="local_x[local_x.length-1]/10 * 100"
+				<u-line-progress class="progress_line" :striped="true" :percent="local_x/10 * 100"
 				 :striped-active="true" :show-percent="false"></u-line-progress>
 			</u-col>
 		</u-row>
@@ -14,33 +14,33 @@
 				Y:
 			</u-col>
 			<u-col span="10">
-				<u-line-progress class="progress_line" :striped="true" :percent="local_y[local_y.length-1]/10 * 100"
+				<u-line-progress class="progress_line" :striped="true" :percent="local_y/10 * 100"
 				 :striped-active="true" :show-percent="false"></u-line-progress>
 			</u-col>
 		</u-row>
-		<u-row gutter="10" justify="center" class="last_line"> -->
-		<!-- 	<u-col span="1">
+		<u-row gutter="10" justify="center" class="last_line">
+		<u-col span="1">
 				Z:
 			</u-col>
 			<u-col span="10">
-				<u-line-progress class="progress_line" :striped="true" :percent="local_z[local_z.length-1]/10 * 100"
+				<u-line-progress class="progress_line" :striped="true" :percent="local_z/10 * 100"
 				 :striped-active="true" :show-percent="false"></u-line-progress>
 			</u-col>
-		</u-row> -->
+		</u-row>
 
-		<u-row gutter="10" justify="around">
+		<!-- <u-row gutter="10" justify="around">
 			<u-col span="4">
 				<u-button class="button_1" @click="start_listen(1000)" :disabled="!start_button" size="medium">Start 1 second</u-button>
 			</u-col>
 			<u-col span="4">
 				<u-button class="button_1" @click="start_listen(30000)" :disabled="!start_button" size="medium">Start 30 second</u-button>
 			</u-col>
-		</u-row>
+		</u-row> -->
 
 		<u-row gutter="10" justify="around">
-			<u-col span="4">
+			<!-- <u-col span="4">
 				<u-button class="button_1" @click="start_listen(60000)" :disabled="!start_button" size="medium">Start 60 second</u-button>
-			</u-col>
+			</u-col> -->
 			<u-col span="4">
 				<u-button class="button_1" @click="stop_listen" :disabled="!end_button" size="medium">Stop listen</u-button>
 			</u-col>
@@ -50,25 +50,39 @@
 			<u-col span="4">
 				<u-button class="button_1" @click="start_listen(33)" :disabled="!start_button" size="medium">Start 30 hz</u-button>
 			</u-col>
-			<u-col span="4">
+			<!-- <u-col span="4">
 				<u-button class="button_1" @click="start_listen(16)" :disabled="!start_button" size="medium">Start 60 hz</u-button>
-			</u-col>
-		</u-row>
-		
-		<u-row gutter="10" justify="around">
-			<u-col span="4">
-				<u-button class="button_1" @click="start_listen(1)" :disabled="!start_button" size="medium">Start 100 hz</u-button>
-			</u-col>
+			</u-col> -->
 			<u-col span="4">
 				<u-button class="button_1" @click="delete_cache"  size="medium">Delete Cache</u-button>
 			</u-col>
 		</u-row>
 		
-		<u-row gutter="10" justify="around">
+		<!-- <u-row gutter="10" justify="around">
 			<u-col span="4">
-				<u-button class="button_1" @click="export_file"  size="medium">Export File</u-button>
+				<u-button class="button_1" @click="start_listen(10)" :disabled="!start_button" size="medium">Start 100 hz</u-button>
 			</u-col>
+			<u-col span="4">
+				<u-button class="button_1" @click="delete_cache"  size="medium">Delete Cache</u-button>
+			</u-col>
+		</u-row> -->
+		
+		<u-row gutter="10" justify="around">
+<!-- 			<u-col span="4">
+				<u-button class="button_1" @click="show = true"  size="medium">{{selected_date}}</u-button>
+			</u-col> -->
+			
+			<u-col span="4">
+				<u-button class="button_1" @click="show = true"  size="medium">Export File</u-button>
+			</u-col>
+<!-- 			<u-col span="4">
+				<u-button class="button_1" @click="test_push"  size="medium">Push</u-button>
+			</u-col>
+			<u-col span="4">
+				<u-button class="button_1" @click="test_clear_push"  size="medium">Clear Push</u-button>
+			</u-col> -->
 		</u-row>
+		<u-calendar v-model="show" :mode="date" @change="export_file"></u-calendar>
 		<u-toast ref="uToast" />
 
 	</view>
@@ -94,7 +108,14 @@
 				wid :'',
 				golbal_event:{
 					step:''
-				}
+				},
+				// 日历
+				show: false,
+				// 单一日期模式
+				date: 'date',
+				// 用于展示的date
+				selected_date: 'Select date'
+				
 			}
 		},
 		onLoad: function(option) {
@@ -124,6 +145,24 @@
 			step.initialize()
 			// 绑定data变量以在其他方法中调用
 			this.golbal_event.step = step
+			
+			// 注册保活程序
+			const hgService = uni.requireNativePlugin("HG-Background");
+			hgService.config({
+			    title:"HAcceleration Service",
+			    content:"Now Running",
+			    mode: 1, //0省电模式 1流氓模式
+			})
+			// 打开安全管理
+			hgService.showSafeSetting()
+			// 检测是否限制后台运行
+			var result=hgService.checkIfLimited()
+			console.log(result)
+			// 申请后台运行
+			hgService.requestIgnoreLimit()
+			// 启动前台服务
+			hgService.startService()
+			
 		},
 		beforeDestroy(){
 			console.log('now unload app')
@@ -180,6 +219,11 @@
 				var data_cache = ''
 				
 				this.wid = plus.accelerometer.watchAcceleration( function ( a ) {
+					// 更新显示
+					self.local_x = a.xAxis
+					self.local_y = a.yAxis
+					self.local_z = a.zAxis
+
 					// 计入步数 
 					if(step_time_cache < 60000){
 						step_time_cache = step_time_cache + milisec
@@ -196,13 +240,13 @@
 						})
 						step_time_cache = 0
 					}
-					// console.log(data_cache.length)
+					console.log(data_cache.length)
 					// 数据存储
-					if (data_cache.length >= 5000000 ){
-						// 当字符串长度大于7000000时，也就是存储大于60kb时
+					if (data_cache.length >= 500000 ){
+						// 当字符串长度大于1000000时，也就是存储大于60kb时
 						var storage_data = data_cache // 设置存储副本
 						data_cache = '' // 清空缓存
-						var key = 'HAcceleration/' + self.user_id + '/' + milisec +'/' +now_date() + '/' + Date.now() // 文件末尾加上时间戳以排序
+						var key = 'HAcceleration/' + self.user_id + '/' + milisec +'/' + now_date() + '/' + Date.now() // 文件末尾加上时间戳以排序
 						
 						plus.storage.setItemAsync(key, storage_data, function(){
 							console.log("setItemAsync success")
@@ -219,17 +263,20 @@
 				
 				
 			},
-			export_file() {
+			export_file(e) {
+				// 获取回调日期参数
+				const selected_date = e.result
+				
 				// 表头
 				var header = "" + "userName" + "," + "Student number" + ","+"Age" + ","+ "Gender" +"," + "Weight"+"," + "Height"+ "\r\n"
 				var acc_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
 				// 时间节点
 				var myDate = new Date()
 				var now_time = "" + myDate.getMonth() + "-" + myDate.getDate() + "-" + myDate.getHours() + "-" + myDate.getMinutes()
-				
-				var final_file = get_files(acc_file,this.user_id)
-				
 				const self = this
+				var final_file = get_files(acc_file,this.user_id,selected_date,self)
+				
+				
 				console.log(plus.io.PUBLIC_DOCUMENTS)
 				// 存储并导出文件
 				file_writer(this.user_id,now_time,final_file)
@@ -252,6 +299,7 @@
 								})
 				console.log(plus.storage.getAllKeys())
 			}
+			
 
 		}
 	}

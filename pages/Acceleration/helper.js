@@ -72,12 +72,22 @@ export function file_writer(user_id,now_time,acc_file){
 }
 
 
-export function get_files(acc_file,user_id){
+export function get_files(acc_file,user_id,date,self){
+
 	// 组装csv文件
 	var keys = plus.storage.getAllKeys()
 	console.log(keys)
-	// 过滤选择的列表并按照时间戳排序
-	keys = keys.filter(item => item.slice(0,13) === 'HAcceleration' && item.split('/')[1] === user_id )
+	// 过滤选择的列表并按照时间戳排序 
+	keys = keys.filter(item => item.slice(0,13) === 'HAcceleration' && item.split('/')[1] === user_id && item.split('/')[3] === date )
+	// 如果选择的日期没有数据
+	if(keys.length === 0){
+		self.$refs.uToast.show({
+							title: 'Selected date not exist!',
+							type: 'error'
+						})
+	}
+	
+	
 	// 构造排序条件函数
 	function fn_sort(x,y){
 		return parseInt(x.split('/').pop()) - parseInt(y.split('/').pop())
