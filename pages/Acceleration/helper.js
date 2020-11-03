@@ -124,8 +124,8 @@ export function file_writer(user_name,data,header){
 							writer.seek(file.size - 1)
 							// 如果文件的长度为0则自动添加文件头
 							if(file.size === 0){
-								writer.write(header)
-								writer.write(data)
+								// 解决两个write无法写入后一个的问题
+								writer.write(header + data)
 							}else{
 								// 向文件中写入一些实体,将文件指针调到文件末尾
 								writer.write(data)

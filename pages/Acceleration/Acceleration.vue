@@ -28,15 +28,6 @@
 			</u-col>
 		</u-row>
 
-		<!-- <u-row gutter="10" justify="around">
-			<u-col span="4">
-				<u-button class="button_1" @click="start_listen(1000)" :disabled="!start_button" size="medium">Start 1 second</u-button>
-			</u-col>
-			<u-col span="4">
-				<u-button class="button_1" @click="start_listen(30000)" :disabled="!start_button" size="medium">Start 30 second</u-button>
-			</u-col>
-		</u-row> -->
-
 		<u-row gutter="10" justify="around">
 			<!-- <u-col span="4">
 				<u-button class="button_1" @click="start_listen(60000)" :disabled="!start_button" size="medium">Start 60 second</u-button>
@@ -44,20 +35,14 @@
 			<u-col span="4">
 				<u-button class="button_1" @click="stop_listen" :disabled="!end_button" size="medium">Stop listen</u-button>
 			</u-col>
-			<u-col span="4">
+			<!-- <u-col span="4">
 				<u-button class="button_1" @click="test_diretory"  size="medium">test_diretory</u-button>
-			</u-col>
+			</u-col> -->
 		</u-row>
 		
 		<u-row gutter="10" justify="around">
 			<u-col span="4">
 				<u-button class="button_1" @click="start_listen(33)" :disabled="!start_button" size="medium">Start 30 hz</u-button>
-			</u-col>
-			<!-- <u-col span="4">
-				<u-button class="button_1" @click="start_listen(16)" :disabled="!start_button" size="medium">Start 60 hz</u-button>
-			</u-col> -->
-			<u-col span="4">
-				<u-button class="button_1" @click="delete_cache"  size="medium">Delete Cache</u-button>
 			</u-col>
 		</u-row>
 		
@@ -75,9 +60,9 @@
 				<u-button class="button_1" @click="show = true"  size="medium">{{selected_date}}</u-button>
 			</u-col> -->
 			
-			<u-col span="4">
+			<!-- <u-col span="4">
 				<u-button class="button_1" @click="show = true"  size="medium">Export File</u-button>
-			</u-col>
+			</u-col> -->
 <!-- 			<u-col span="4">
 				<u-button class="button_1" @click="test_push"  size="medium">Push</u-button>
 			</u-col>
@@ -85,7 +70,7 @@
 				<u-button class="button_1" @click="test_clear_push"  size="medium">Clear Push</u-button>
 			</u-col> -->
 		</u-row>
-		<u-calendar v-model="show" :mode="date" @change="export_file"></u-calendar>
+		<!-- <u-calendar v-model="show" :mode="date" @change="export_file"></u-calendar> -->
 		<u-toast ref="uToast" />
 
 	</view>
@@ -117,7 +102,10 @@
 				// 单一日期模式
 				date: 'date',
 				// 用于展示的date
-				selected_date: 'Select date'
+				selected_date: 'Select date',
+				// 数据缓存
+				data_cache:'',
+				header_file: ''
 				
 			}
 		},
@@ -183,16 +171,21 @@
 			stop_listen() {
 				this.end_button = false
 				this.start_button = true
-				this.save_button = true
-				clearInterval(this.inerval_id)
+				
+				
+				// 关闭监听器
+				plus.accelerometer.clearWatch( this.wid )
+				
+				
+				// 当用户点击stop的时候将内存中的数据存入文件
+				var final_file = this.data_cache
+				file_writer(this.user_id,final_file,this.header_file)
+				
 				this.$refs.uToast.show({
 									title: 'Successfully Stop',
 									type: 'success'
 								})
-				console.log('success stop Interval')
-				
-				// 关闭监听器
-				plus.accelerometer.clearWatch( this.wid )
+								
 			},
 			start_listen(milisec) {
 				this.$refs.uToast.show({
@@ -201,7 +194,6 @@
 								})
 				this.end_button = true
 				this.start_button = false
-				this.save_button = false
 				const self = this
 				// 首先获取开始时间
 				var myDate = new Date()
@@ -219,11 +211,11 @@
 				// 使用watch 监听设备加速度变化
 				
 				//设置字符串缓存变量
-				var data_cache = ''
+				this.data_cache = ''
 				
 				// 表头
 				var header = "" + "userName" + "," + "Student number" + ","+"Age" + ","+ "Gender" +"," + "Weight"+"," + "Height"+ "\r\n"
-				var header_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
+				this.header_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
 				
 				this.wid = plus.accelerometer.watchAcceleration( function ( a ) {
 					// 更新显示
@@ -235,25 +227,25 @@
 					if(step_time_cache < 60000){
 						step_time_cache = step_time_cache + milisec
 						// 拼接字符串
-						data_cache = data_cache + add_a_row(a.xAxis,a.yAxis,a.zAxis,'',myDate,milisec)
+						self.data_cache += add_a_row(a.xAxis,a.yAxis,a.zAxis,'',myDate,milisec)
 					}else{
 					
 						self.golbal_event.step.getCurrentTimeSportStep(function(n) {
 							// 计算一分钟内的所有步数
 							var step_per_minute = n - self.init_step 
 							// 拼接字符串
-							data_cache = data_cache + add_a_row(a.xAxis,a.yAxis,a.zAxis,step_per_minute,myDate,milisec)
+							self.data_cache += add_a_row(a.xAxis,a.yAxis,a.zAxis,step_per_minute,myDate,milisec)
 							self.init_step = n
 						})
 						step_time_cache = 0
 					}
 					
 					// 数据存储
-					if (data_cache.length >= 800000 ){
+					if (self.data_cache.length >= 800000 ){
 						// 当字符串长度大于1000000时，也就是存储大于60kb时
-						var storage_data = data_cache // 设置存储副本
-						data_cache = '' // 清空缓存
-						file_writer(self.user_id,storage_data,header_file)
+						var storage_data = self.data_cache // 设置存储副本
+						self.data_cache = '' // 清空缓存
+						file_writer(self.user_id,storage_data,self.header_file)
 					}
 					
 				}, function ( e ) {
@@ -263,47 +255,9 @@
 				
 				
 			},
-			export_file(e) {
-				// 获取回调日期参数
-				const selected_date = e.result
-				
-				// 表头
-				var header = "" + "userName" + "," + "Student number" + ","+"Age" + ","+ "Gender" +"," + "Weight"+"," + "Height"+ "\r\n"
-				var acc_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
-				// 时间节点
-				var myDate = new Date()
-				var now_time = "" + myDate.getMonth() + "-" + myDate.getDate() + "-" + myDate.getHours() + "-" + myDate.getMinutes()
-				const self = this
-				var final_file = get_files(acc_file,this.user_id,selected_date,self)
-				
-				
-				console.log(plus.io.PUBLIC_DOCUMENTS)
-				// 存储并导出文件
-				file_writer(this.user_id,now_time,final_file)
-				
-				this.$refs.uToast.show({
-									title: 'Successfully exported',
-									type: 'success'
-								})
-				console.log('success exported')
-			},
-			delete_cache(){
-				var keys = plus.storage.getAllKeys()
-				keys = keys.filter(item => item.slice(0,13) === 'HAcceleration')
-				for(var i in keys ){
-					plus.storage.removeItem(keys[i])
-				}
-				this.$refs.uToast.show({
-									title: 'Successfully deleted',
-									type: 'success'
-								})
-				console.log(plus.storage.getAllKeys())
-			},
-			async test_diretory(){
-				for(var i = 0; i < 10; i++){
-					file_writer('songzihan' ,''+i+ '-- nihaoa\r\n','Header\r\n')
-					await sleep(100)
-				}
+			test_diretory(){
+				// 测试一次写入两行
+				file_writer('songzihan' ,'-- nihaoa\r\n','Header\r\n')
 				this.$refs.uToast.show({
 									title: 'Successfully writed',
 									type: 'success'
