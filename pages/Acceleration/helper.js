@@ -7,6 +7,19 @@ export function add_a_row(x,y,z,step,myDate,milisec){
 	return '' + x + ',' + y + ',' + z +','+ step + ',' + time + '\r\n'
 }
 
+export function add_a_row_orientation(rotation,position,myDate,milisec){
+	// 整理好返回一个逗号分隔的一行文件
+	// alpha,beta,gamma,magneticHeading,trueHeading,headingAccuracy,latitude,longitude,altitude,accuracy,altitudeAccuracy,heading,speed,
+	myDate.setMilliseconds(myDate.getMilliseconds()+milisec)
+	var time = "" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds() + ":" + myDate.getMilliseconds()
+	if (position === ''){
+		return '' + rotation.alpha+ ',' + rotation.beta+ ',' + rotation.gamma+ ',' + rotation.magneticHeading+ ',' + rotation.trueHeading+ ',' + rotation.headingAccuracy+ ',' + '' + ',' + ''+ ',' + ''+ ',' + ''+ ',' + ''+ ',' + ''+ ',' + '' + ',' +  time + '\r\n'
+	}else{
+		var coords = position.coords
+		return '' + rotation.alpha+ ',' + rotation.beta+ ',' + rotation.gamma+ ',' + rotation.magneticHeading+ ',' + rotation.trueHeading+ ',' + rotation.headingAccuracy+ ',' + coords.latitude + ',' + coords.longitude+ ',' + coords.altitude + ',' + coords.accuracy+ ',' + coords.altitudeAccuracy+ ',' + coords.heading + ',' + coords.speed+ ',' +  time + '\r\n'
+	}
+}
+
 
 // 异步存储键值
 export function setStorageAsync(key,data) {
@@ -100,15 +113,22 @@ export function get_files(acc_file,user_id,date,self){
 	return acc_file
 }
 
-export function file_writer(user_name,data,header){
+export function file_writer(user_name,data,header,file_type){
 	// user_name 用户名，用来创建文件夹
 	// data 文件对象 字符串格式
 	// header 如果文件的长度为0则自动添加文件头
+	// file_type 文件的类型： 
+	// 			加速度数据： acceleration String
+	// 			方向+位置数据：orientation String
 	
 	// 获取当前时间
 	var date = now_date()
 	// 组装文件名
-	var file_name = date + '.csv'
+	if( file_type === 'acceleration' ){
+		var file_name = date + '-' + 'acceleration' +'.csv'
+	}else{
+		var file_name = date + '-' + 'orientation' +'.csv'
+	}
 	
 	plus.io.resolveLocalFileSystemURL('_documents', function(entry) {
 		// 创建文件夹,如果不存在的话

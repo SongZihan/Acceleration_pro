@@ -77,7 +77,7 @@
 </template>
 
 <script>
-	import {add_a_row,now_date,file_writer,get_files,sleep} from './helper.js'
+	import {add_a_row,add_a_row_orientation,now_date,file_writer,get_files,sleep} from './helper.js'
 	export default {
 		data() {
 			return {
@@ -94,6 +94,7 @@
 				clear_button: true,
 				user : {},
 				wid :'',
+				orientation_wid:'',
 				golbal_event:{
 					step:''
 				},
@@ -105,7 +106,9 @@
 				selected_date: 'Select date',
 				// 数据缓存
 				data_cache:'',
-				header_file: ''
+				orientation_cache: '',
+				orientation_header_file:'',
+				acceleration_header_file: '',
 				
 			}
 		},
@@ -154,6 +157,7 @@
 			// 启动前台服务
 			hgService.startService()
 			
+			
 		},
 		beforeDestroy(){
 			console.log('now unload app')
@@ -175,11 +179,15 @@
 				
 				// 关闭监听器
 				plus.accelerometer.clearWatch( this.wid )
+				plus.orientation.clearWatch(this.orientation_wid)
 				
 				
 				// 当用户点击stop的时候将内存中的数据存入文件
-				var final_file = this.data_cache
-				file_writer(this.user_id,final_file,this.header_file)
+				file_writer(this.user_id,this.data_cache,this.acceleration_header_file,'acceleration')
+				
+				file_writer(this.user_id,this.orientation_cache,this.orientation_header_file,'orientation')
+				
+				
 				
 				this.$refs.uToast.show({
 									title: 'Successfully Stop',
@@ -188,6 +196,10 @@
 								
 			},
 			start_listen(milisec) {
+				
+				// 触发定位服务许可
+				plus.geolocation.getCurrentPosition()
+				
 				this.$refs.uToast.show({
 									title: 'start listen~',
 									type: 'success'
@@ -208,15 +220,16 @@
 				})
 				// 计步器时间缓存
 				var step_time_cache = 0
-				// 使用watch 监听设备加速度变化
 				
 				//设置字符串缓存变量
 				this.data_cache = ''
 				
 				// 表头
 				var header = "" + "userName" + "," + "Student number" + ","+"Age" + ","+ "Gender" +"," + "Weight"+"," + "Height"+ "\r\n"
-				this.header_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
+				this.acceleration_header_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
+				this.orientation_header_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "alpha,beta,gamma,magneticHeading,trueHeading,headingAccuracy,latitude,longitude,altitude,accuracy,altitudeAccuracy,heading,speed,time\r\n"
 				
+				// 使用watch 监听设备加速度变化
 				this.wid = plus.accelerometer.watchAcceleration( function ( a ) {
 					// 更新显示
 					self.local_x = a.xAxis
@@ -240,24 +253,58 @@
 						step_time_cache = 0
 					}
 					
+					
 					// 数据存储
 					if (self.data_cache.length >= 800000 ){
 						// 当字符串长度大于1000000时，也就是存储大于60kb时
 						var storage_data = self.data_cache // 设置存储副本
 						self.data_cache = '' // 清空缓存
-						file_writer(self.user_id,storage_data,self.header_file)
+						file_writer(self.user_id,storage_data,self.acceleration_header_file,'acceleration')
 					}
 					
 				}, function ( e ) {
 					plus.nativeUI.alert("watchAcceleration error: " + JSON.stringify(e)); 
 				}, {frequency:milisec}); // 设置更新间隔时间为 milisec ms
-
+				
+				// 方向监听器时间缓存
+				var time_orientation_cache = 0
+				
+				// 监听设备的方向和定位
+				this.orientation_wid = plus.orientation.watchOrientation( function(rotation){
+					
+					// 每分钟计入一次定位数据
+					if(time_orientation_cache < 60000){
+						time_orientation_cache += milisec
+						// 拼接字符串
+						self.orientation_cache += add_a_row_orientation(rotation,'',myDate,milisec)
+					}else{
+					
+						// 获取用户定位数据
+						plus.geolocation.getCurrentPosition(function(position){
+							
+							self.orientation_cache += add_a_row_orientation(rotation,position,myDate,milisec)
+							
+						}, function(){}, {enableHighAccuracy:true})
+						
+						time_orientation_cache = 0
+					}
+					// 数据存储
+					if (self.orientation_cache.length >= 800000 ){
+						// 当字符串长度大于1000000时，也就是存储大于60kb时
+						var storage_data_orientation = self.orientation_cache // 设置存储副本
+						self.orientation_cache = '' // 清空缓存
+						file_writer(self.user_id,storage_data_orientation,self.orientation_header_file,'orientation')
+					}
+					
+				},
+				function ( e ) {plus.nativeUI.alert("watchAcceleration error: " + JSON.stringify(e)); 
+				}, {frequency:milisec} )
 				
 				
 			},
 			test_diretory(){
 				// 测试一次写入两行
-				file_writer('songzihan' ,'-- nihaoa\r\n','Header\r\n')
+				file_writer('songzihan' ,'-- nihaoa\r\n','Header\r\n','acceleration')
 				this.$refs.uToast.show({
 									title: 'Successfully writed',
 									type: 'success'
