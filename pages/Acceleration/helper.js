@@ -3,8 +3,13 @@ export function add_a_row(x,y,z,step,myDate,milisec){
 	myDate.setMilliseconds(myDate.getMilliseconds()+milisec)
 	var time = "" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds() + ":" + myDate.getMilliseconds()
 	
+	x = x*100
+	y = y*100
+	z = z*100
+	
+	var magnitude = Math.sqrt(x*x+y*y+z*z)
 	// 返回一个整理好的逗号分隔的一行数据
-	return '' + x + ',' + y + ',' + z +','+ step + ',' + time + '\r\n'
+	return '' + x + ',' + y + ',' + z +',' + magnitude + ','+ step + ',' + time + '\r\n'
 }
 
 export function add_a_row_orientation(rotation,position,myDate,milisec){
@@ -113,21 +118,26 @@ export function get_files(acc_file,user_id,date,self){
 	return acc_file
 }
 
-export function file_writer(user_name,data,header,file_type){
+export function file_writer(user_name,data,header,file_type,time_type){
 	// user_name 用户名，用来创建文件夹
 	// data 文件对象 字符串格式
 	// header 如果文件的长度为0则自动添加文件头
 	// file_type 文件的类型： 
 	// 			加速度数据： acceleration String
 	// 			方向+位置数据：orientation String
+	// time_type 数据抽取的时间类型
+	//			默认 30hz-0.033s
+	// 			60s 
 	
 	// 获取当前时间
 	var date = now_date()
+
+	
 	// 组装文件名
 	if( file_type === 'acceleration' ){
-		var file_name = date + '-' + 'acceleration' +'.csv'
+		var file_name = date + '-' + time_type + '-' + 'acceleration' +'.csv'
 	}else{
-		var file_name = date + '-' + 'orientation' +'.csv'
+		var file_name = date + '-' + time_type + '-' + 'orientation' +'.csv'
 	}
 	
 	plus.io.resolveLocalFileSystemURL('_documents', function(entry) {

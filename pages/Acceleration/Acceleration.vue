@@ -44,6 +44,9 @@
 			<u-col span="4">
 				<u-button class="button_1" @click="start_listen(33)" :disabled="!start_button" size="medium">Start 30 hz</u-button>
 			</u-col>
+			<u-col span="4">
+				<u-button class="button_1" @click="start_listen(60000)" :disabled="!start_button" size="medium">Start 60s</u-button>
+			</u-col>
 		</u-row>
 		
 		<!-- <u-row gutter="10" justify="around">
@@ -82,16 +85,12 @@
 		data() {
 			return {
 				init_step: 0,
-				step_list:[],
 				local_x: '',
 				local_y: '',
 				local_z: '',
-				local_time: '',
 				user_id: '',
 				start_button: true,
 				end_button: false,
-				save_button: false,
-				clear_button: true,
 				user : {},
 				wid :'',
 				orientation_wid:'',
@@ -109,6 +108,8 @@
 				orientation_cache: '',
 				orientation_header_file:'',
 				acceleration_header_file: '',
+				// 数据抽取间隔
+				time_type:''
 				
 			}
 		},
@@ -165,8 +166,6 @@
 			this.local_x = []
 			this.local_y = []
 			this.local_z = []
-			this.local_time = []
-			this.step_list = []
 			this.init_step = 0
 			this.interval_cache = 0
 			
@@ -183,9 +182,9 @@
 				
 				
 				// 当用户点击stop的时候将内存中的数据存入文件
-				file_writer(this.user_id,this.data_cache,this.acceleration_header_file,'acceleration')
+				file_writer(this.user_id,this.data_cache,this.acceleration_header_file,'acceleration',this.time_type)
 				
-				file_writer(this.user_id,this.orientation_cache,this.orientation_header_file,'orientation')
+				file_writer(this.user_id,this.orientation_cache,this.orientation_header_file,'orientation',this.time_type)
 				
 				
 				
@@ -226,8 +225,15 @@
 				
 				// 表头
 				var header = "" + "userName" + "," + "Student number" + ","+"Age" + ","+ "Gender" +"," + "Weight"+"," + "Height"+ "\r\n"
-				this.acceleration_header_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,steps/Minute,time\r\n"
+				this.acceleration_header_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "y,x,z,magnitude,steps/Minute,time\r\n"
 				this.orientation_header_file = header + "" + this.user_id + ","+ this.user.student_number +","+ this.user.age +"," + this.user.sex +"," +this.user.weight+","+this.user.height+"\r\n" + "alpha,beta,gamma,magneticHeading,trueHeading,headingAccuracy,latitude,longitude,altitude,accuracy,altitudeAccuracy,heading,speed,time\r\n"
+				
+				// 抽取时间的间隔
+				if(milisec === 33){
+					this.time_type = '30hz'
+				}else if (milisec === 60000){
+					this.time_type = '60s'
+				}
 				
 				// 使用watch 监听设备加速度变化
 				this.wid = plus.accelerometer.watchAcceleration( function ( a ) {
@@ -250,7 +256,8 @@
 							self.data_cache += add_a_row(a.xAxis,a.yAxis,a.zAxis,step_per_minute,myDate,milisec)
 							self.init_step = n
 						})
-						step_time_cache = 0
+						// 必须计入本次的循环时间
+						step_time_cache = milisec
 					}
 					
 					
@@ -259,7 +266,7 @@
 						// 当字符串长度大于1000000时，也就是存储大于60kb时
 						var storage_data = self.data_cache // 设置存储副本
 						self.data_cache = '' // 清空缓存
-						file_writer(self.user_id,storage_data,self.acceleration_header_file,'acceleration')
+						file_writer(self.user_id,storage_data,self.acceleration_header_file,'acceleration',self.time_type)
 					}
 					
 				}, function ( e ) {
@@ -293,7 +300,7 @@
 						// 当字符串长度大于1000000时，也就是存储大于60kb时
 						var storage_data_orientation = self.orientation_cache // 设置存储副本
 						self.orientation_cache = '' // 清空缓存
-						file_writer(self.user_id,storage_data_orientation,self.orientation_header_file,'orientation')
+						file_writer(self.user_id,storage_data_orientation,self.orientation_header_file,'orientation',self.time_type)
 					}
 					
 				},
@@ -301,17 +308,7 @@
 				}, {frequency:milisec} )
 				
 				
-			},
-			test_diretory(){
-				// 测试一次写入两行
-				file_writer('songzihan' ,'-- nihaoa\r\n','Header\r\n','acceleration')
-				this.$refs.uToast.show({
-									title: 'Successfully writed',
-									type: 'success'
-								})
-			},
-			
-
+			}
 		}
 	}
 </script>
