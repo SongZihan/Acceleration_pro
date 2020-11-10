@@ -59,6 +59,9 @@
 		</u-row> -->
 		
 		<u-row gutter="10" justify="around">
+			<u-col span="4">
+				<u-button class="button_1" @click="start_listen(10)" :disabled="!start_button" size="medium">Start 100HZ</u-button>
+			</u-col>
 <!-- 			<u-col span="4">
 				<u-button class="button_1" @click="show = true"  size="medium">{{selected_date}}</u-button>
 			</u-col> -->
@@ -186,6 +189,10 @@
 				
 				file_writer(this.user_id,this.orientation_cache,this.orientation_header_file,'orientation',this.time_type)
 				
+				// 文件写入之后应该将缓存清空以防止重复写入
+				this.data_cache = ''
+				this.orientation_cache = ''
+				
 				
 				
 				this.$refs.uToast.show({
@@ -233,6 +240,8 @@
 					this.time_type = '30hz'
 				}else if (milisec === 60000){
 					this.time_type = '60s'
+				}else if (milisec === 10){
+					this.time_type = '100HZ'
 				}
 				
 				// 使用watch 监听设备加速度变化
@@ -244,7 +253,7 @@
 
 					// 计入步数 
 					if(step_time_cache < 60000){
-						step_time_cache = step_time_cache + milisec
+						step_time_cache += milisec
 						// 拼接字符串
 						self.data_cache += add_a_row(a.xAxis,a.yAxis,a.zAxis,'',myDate,milisec)
 					}else{
@@ -276,6 +285,9 @@
 				// 方向监听器时间缓存
 				var time_orientation_cache = 0
 				
+				// 定义用于方位器监听器的时间变量
+				var date_for_orientation = new Date()
+				
 				// 监听设备的方向和定位
 				this.orientation_wid = plus.orientation.watchOrientation( function(rotation){
 					
@@ -283,13 +295,13 @@
 					if(time_orientation_cache < 60000){
 						time_orientation_cache += milisec
 						// 拼接字符串
-						self.orientation_cache += add_a_row_orientation(rotation,'',myDate,milisec)
+						self.orientation_cache += add_a_row_orientation(rotation,'',date_for_orientation,milisec)
 					}else{
 					
 						// 获取用户定位数据
 						plus.geolocation.getCurrentPosition(function(position){
 							
-							self.orientation_cache += add_a_row_orientation(rotation,position,myDate,milisec)
+							self.orientation_cache += add_a_row_orientation(rotation,position,date_for_orientation,milisec)
 							
 						}, function(){}, {enableHighAccuracy:true})
 						
