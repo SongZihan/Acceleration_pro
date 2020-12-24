@@ -65,7 +65,7 @@
 		data() {
 			return {
 				form: {
-					name: '',
+					name: 'songzihan',
 					gender: '',
 					sex: '',
 					student_number: '',

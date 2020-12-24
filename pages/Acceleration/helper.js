@@ -25,6 +25,14 @@ export function add_a_row_orientation(rotation,position,date_for_orientation,mil
 	}
 }
 
+export function add_a_row_orientation_without_position(rotation,date_for_orientation,milisec){
+	// 整理好返回一个逗号分隔的一行文件
+	// alpha,beta,gamma,magneticHeading,trueHeading,headingAccuracy,latitude,longitude,altitude,accuracy,altitudeAccuracy,heading,speed,
+	date_for_orientation.setMilliseconds(date_for_orientation.getMilliseconds()+milisec)
+	var time_r = "" + date_for_orientation.getHours() + ":" + date_for_orientation.getMinutes() + ":" + date_for_orientation.getSeconds() + ":" + date_for_orientation.getMilliseconds()
+	
+	return '' + rotation.alpha+ ',' + rotation.beta+ ',' + rotation.gamma+ ',' + rotation.magneticHeading+ ',' + rotation.trueHeading+ ',' + rotation.headingAccuracy+ ','  +  date_for_orientation.toISOString()  + '\r\n'
+}
 
 // 异步存储键值
 export function setStorageAsync(key,data) {
@@ -66,28 +74,6 @@ export function now_date(){
 	return nowDate
 }
 
-
-// export function file_writer(user_id,now_time,acc_file){
-// 	plus.io.requestFileSystem(plus.io.PUBLIC_DOCUMENTS, function(fs) {
-// 		// fs.root是根目录操作对象DirectoryEntry
-// 		fs.root.getFile('acceleration' + '-' + user_id + "-" + now_time + '.csv', {
-// 			create: true
-// 		}, function(fileEntry) {
-// 			fileEntry.file(function(file) {
-// 				// create a FileWriter to write to the file
-// 				fileEntry.createWriter(function(writer) {
-// 					// Write data to file.
-// 					// 快速将文件指针转发到文件末尾
-// 					writer.seek(file.size - 1)
-// 					writer.write(acc_file)
-// 				}, function(e) {
-// 					console.log("Request file system failed: " + e.message)
-// 				})
-// 			})
-// 		})
-		
-// 	})
-// }
 
 
 export function get_files(acc_file,user_id,date,self){
