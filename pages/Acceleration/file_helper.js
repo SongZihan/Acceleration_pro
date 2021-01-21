@@ -6,9 +6,10 @@ import {
 
 
 export function add_a_row(data) {
-
-	return '' + data + ',' + getCurrentTime() + '\r\n'
+	var time = Date.now()
+	return '' + data + ',' + time.toString() + '\r\n'
 }
+
 export function add_data(self, data) {
 	// 处理数据,给全局的data变量增加一行
 	self.data += add_a_row(data)

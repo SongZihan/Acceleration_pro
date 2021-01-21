@@ -3,18 +3,26 @@
  */
 export function getCurrentTime() {
     var date = new Date();//当前时间
-    var month = zeroFill(date.getMonth() + 1);//月
-    var day = zeroFill(date.getDate());//日
-    var hour = zeroFill(date.getHours());//时
-    var minute = zeroFill(date.getMinutes());//分
-    var second = zeroFill(date.getSeconds());//秒
-	var milisec = zeroFill(date.getMilliseconds()) // 微妙
+ //    var month = zeroFill(date.getMonth() + 1);//月
+ //    var day = zeroFill(date.getDate());//日
+ //    var hour = zeroFill(date.getHours());//时
+ //    var minute = zeroFill(date.getMinutes());//分
+ //    var second = zeroFill(date.getSeconds());//秒
+	// var milisec = zeroFill(date.getMilliseconds()) // 微妙
     
-    //当前时间
-    var curTime = date.getFullYear() + "-" + month + "-" + day
-            + " " + hour + ":" + minute + ":" + second + "." + milisec
+ //    //当前时间
+ //    var curTime = date.getFullYear() + "-" + month + "-" + day
+ //            + " " + hour + ":" + minute + ":" + second + "." + milisec
+    var time = "" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds()
     
-    return curTime;
+    return time
+}
+export function getTimeString(this_time,milisec) {
+	// 返回添加了milisec的时间字符串
+	// this_time.setMilliseconds(this_time.getMilliseconds()+milisec)
+	// var time = "" + this_time.getHours() + ":" + this_time.getMinutes() + ":" + this_time.getSeconds() + ":" + this_time.getMilliseconds()
+    var time = Date.now()
+    return time.toString()
 }
  // 将log信息写入显示元素中以在手机屏幕上打印log
  export function log_this(self, type, str) {

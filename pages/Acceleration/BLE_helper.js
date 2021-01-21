@@ -233,6 +233,7 @@ export function notifyBLECharacteristicValueChange(self, deviceId, serviceId, ch
 				// console.log('value(hex) = ' + value)
 				// 写入缓存
 				add_data(self,value)
+				self.pressure_data = value
 			})
 
 			plus.bluetooth.notifyBLECharacteristicValueChange({

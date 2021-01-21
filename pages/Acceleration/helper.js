@@ -1,37 +1,39 @@
 export function add_a_row(x,y,z,step,myDate,milisec){
 	
-	myDate.setMilliseconds(myDate.getMilliseconds()+milisec)
-	var time = "" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds() + ":" + myDate.getMilliseconds()
-	
-	x = x/9.8
-	y = y/9.8
-	z = z/9.8
-	
-	var magnitude = Math.sqrt(x*x+y*y+z*z)
+	// myDate.setMilliseconds(myDate.getMilliseconds()+milisec)
+	// var time = "" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds() + ":" + myDate.getMilliseconds()
+	var time = Date.now()
+	// x = x/9.8
+	// y = y/9.8
+	// z = z/9.8
+	var magnitude = 0
+	// var magnitude = Math.sqrt(x*x+y*y+z*z)
 	// 返回一个整理好的逗号分隔的一行数据 使用timestamp
-	return '' + x + ',' + y + ',' + z +',' + magnitude + ','+ step + ',' + myDate.toISOString() + '\r\n'
+	return '' + x + ',' + y + ',' + z +',' + magnitude + ','+ step + ',' + time.toString() + '\r\n'
 }
 
 export function add_a_row_orientation(rotation,position,date_for_orientation,milisec){
 	// 整理好返回一个逗号分隔的一行文件
 	// alpha,beta,gamma,magneticHeading,trueHeading,headingAccuracy,latitude,longitude,altitude,accuracy,altitudeAccuracy,heading,speed,
-	date_for_orientation.setMilliseconds(date_for_orientation.getMilliseconds()+milisec)
-	var time_r = "" + date_for_orientation.getHours() + ":" + date_for_orientation.getMinutes() + ":" + date_for_orientation.getSeconds() + ":" + date_for_orientation.getMilliseconds()
+	// date_for_orientation.setMilliseconds(date_for_orientation.getMilliseconds()+milisec)
+	var time = Date.now()
+	// var time_r = "" + date_for_orientation.getHours() + ":" + date_for_orientation.getMinutes() + ":" + date_for_orientation.getSeconds() + ":" + date_for_orientation.getMilliseconds()
 	if (position === ''){
-		return '' + rotation.alpha+ ',' + rotation.beta+ ',' + rotation.gamma+ ',' + rotation.magneticHeading+ ',' + rotation.trueHeading+ ',' + rotation.headingAccuracy+ ',' + '' + ',' + ''+ ',' + ''+ ',' + ''+ ',' + ''+ ',' + ''+ ',' + '' + ',' +  date_for_orientation.toISOString()  + '\r\n'
+		return '' + rotation.alpha+ ',' + rotation.beta+ ',' + rotation.gamma+ ',' + rotation.magneticHeading+ ',' + rotation.trueHeading+ ',' + rotation.headingAccuracy+ ',' + '' + ',' + ''+ ',' + ''+ ',' + ''+ ',' + ''+ ',' + ''+ ',' + '' + ',' +  time.toString()  + '\r\n'
 	}else{
 		var coords = position.coords
-		return '' + rotation.alpha+ ',' + rotation.beta+ ',' + rotation.gamma+ ',' + rotation.magneticHeading+ ',' + rotation.trueHeading+ ',' + rotation.headingAccuracy+ ',' + coords.latitude + ',' + coords.longitude+ ',' + coords.altitude + ',' + coords.accuracy+ ',' + coords.altitudeAccuracy+ ',' + coords.heading + ',' + coords.speed+ ',' +  date_for_orientation.toISOString() + '\r\n'
+		return '' + rotation.alpha+ ',' + rotation.beta+ ',' + rotation.gamma+ ',' + rotation.magneticHeading+ ',' + rotation.trueHeading+ ',' + rotation.headingAccuracy+ ',' + coords.latitude + ',' + coords.longitude+ ',' + coords.altitude + ',' + coords.accuracy+ ',' + coords.altitudeAccuracy+ ',' + coords.heading + ',' + coords.speed+ ',' +  time.toString() + '\r\n'
 	}
 }
 
 export function add_a_row_orientation_without_position(rotation,date_for_orientation,milisec){
 	// 整理好返回一个逗号分隔的一行文件
 	// alpha,beta,gamma,magneticHeading,trueHeading,headingAccuracy,latitude,longitude,altitude,accuracy,altitudeAccuracy,heading,speed,
-	date_for_orientation.setMilliseconds(date_for_orientation.getMilliseconds()+milisec)
-	var time_r = "" + date_for_orientation.getHours() + ":" + date_for_orientation.getMinutes() + ":" + date_for_orientation.getSeconds() + ":" + date_for_orientation.getMilliseconds()
+	// date_for_orientation.setMilliseconds(date_for_orientation.getMilliseconds()+milisec)
+	var time = Date.now()
+	// var time_r = "" + date_for_orientation.getHours() + ":" + date_for_orientation.getMinutes() + ":" + date_for_orientation.getSeconds() + ":" + date_for_orientation.getMilliseconds()
 	
-	return '' + rotation.alpha+ ',' + rotation.beta+ ',' + rotation.gamma+ ',' + rotation.magneticHeading+ ',' + rotation.trueHeading+ ',' + rotation.headingAccuracy+ ','  +  date_for_orientation.toISOString()  + '\r\n'
+	return '' + rotation.alpha+ ',' + rotation.beta+ ',' + rotation.gamma+ ',' + rotation.magneticHeading+ ',' + rotation.trueHeading+ ',' + rotation.headingAccuracy+ ','  +  time.toString()  + '\r\n'
 }
 
 // 异步存储键值

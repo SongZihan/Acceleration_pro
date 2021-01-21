@@ -57,6 +57,17 @@
 				<u-button class="button_1" type="info" @click="save_data" :disabled="stopButton">Stop and Save</u-button>
 			</u-col>
 		</u-row>
+		<u-row gutter="10" justify="center">
+			<!-- <u-col span="4">
+				<u-button class="button_1" @click="start_listen(60000)" :disabled="!start_button" size="medium">Start 60 second</u-button>
+			</u-col> -->
+			<u-col span="4">
+				pressure_data: {{pressure_data}}
+			</u-col>
+			<!-- <u-col span="4">
+				<u-button class="button_1" @click="test_diretory"  size="medium">test_diretory</u-button>
+			</u-col> -->
+		</u-row>
 		<u-row gutter="10" justify="around">
 			<!-- <u-col span="4">
 				<u-button class="button_1" @click="start_listen(60000)" :disabled="!start_button" size="medium">Start 60 second</u-button>
@@ -68,6 +79,7 @@
 				<u-button class="button_1" @click="test_diretory"  size="medium">test_diretory</u-button>
 			</u-col> -->
 		</u-row>
+
 
 		<u-row gutter="10" justify="around">
 			<u-col span="4">
@@ -154,6 +166,7 @@
 				/*
 				蓝牙相关数据
 				*/
+			   // DeviceId: "3C:A5:49:DE:83:BE",
 			   DeviceId: "3C:A5:4A:E4:06:18",
 			   serviceId: '0000FFE0-0000-1000-8000-00805F9B34FB',
 			   characteristicId: "0000FFE1-0000-1000-8000-00805F9B34FB",
@@ -162,7 +175,7 @@
 			   // 用户信息
 			   userInfo: {
 			   	username: "Song Zihan",
-			   	header: "data,time\r\n",
+			   	header: "data1,data2,time\r\n",
 			   	file_type: "Pressure",
 			   },
 			   // 数据
@@ -175,7 +188,10 @@
 			   stopButton: true,
 			   startButton: false,
 			   // 滚动条
-			   scrollTop:0
+			   scrollTop:0,
+			   // 校准时间的全局变量
+			   thresholds: 0,
+			   pressure_data:''
 
 			}
 		},
@@ -231,7 +247,6 @@
 			// 启动前台服务
 			hgService.startService()
 
-
 		},
 		beforeDestroy() {
 			console.log('now unload app')
@@ -285,6 +300,8 @@
 				const self = this
 				// 首先获取开始时间
 				var myDate = new Date()
+				// 时间阈值
+				var time_thresold = 0
 				// self.local_time.push("" + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds())
 				console.log('start listen')
 
@@ -327,7 +344,13 @@
 					self.local_x = a.xAxis
 					self.local_y = a.yAxis
 					self.local_z = a.zAxis
-
+					// 更新时间阈值
+					if(time_thresold > 5000){
+						myDate = new Date()
+						time_thresold = 0
+					}else{
+						time_thresold += 33
+					}
 					// 计入步数 
 					if (step_time_cache < 60000) {
 						step_time_cache += milisec
@@ -366,11 +389,19 @@
 
 				// 定义用于方位器监听器的时间变量
 				var date_for_orientation = new Date()
+				// 方位器时间阈值
+				var ori_thsorld = 0
 
 				// 监听设备的方向和定位
 				this.orientation_wid = plus.orientation.watchOrientation(function(rotation) {
-
-
+						// 更新时间阈值
+						if(ori_thsorld > 5000){
+							date_for_orientation = new Date()
+							ori_thsorld = 0
+						}else{
+							ori_thsorld += 33
+						}
+						
 						// time_orientation_cache += milisec
 						// 拼接字符串
 						self.orientation_cache += add_a_row_orientation_without_position(rotation, date_for_orientation, milisec)
@@ -403,7 +434,8 @@
 						this,
 						this.DeviceId,
 						this.serviceId,
-						this.characteristicId)
+						this.characteristicId
+						)
 					// 订阅成功，改变按钮状态
 					this.connectStatus = 'success'
 					this.connectText = 'Connected'
