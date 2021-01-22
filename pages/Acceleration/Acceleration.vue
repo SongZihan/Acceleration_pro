@@ -30,13 +30,13 @@
 
 		<u-row gutter="10" justify="center" class="first_line">
 			<u-col span="4">
-				alpha_z: {{alpha_z}}
+				x: {{x}}
 			</u-col>
 			<u-col span="4">
-				beta_x: {{beta_x}}
+				y: {{y}}
 			</u-col>
 			<u-col span="4">
-				gama_y: {{gama_y}}
+				z: {{z}}
 			</u-col>
 		</u-row>
 		
@@ -160,9 +160,9 @@
 				// 数据抽取间隔
 				time_type: '',
 				// 陀螺仪数据
-				alpha_z: '',
-				beta_x: '',
-				gama_y: '',
+				x: '',
+				y: '',
+				z: '',
 				/*
 				蓝牙相关数据
 				*/
@@ -266,7 +266,14 @@
 
 				// 关闭监听器
 				plus.accelerometer.clearWatch(this.wid)
-				plus.orientation.clearWatch(this.orientation_wid)
+				uni.stopGyroscope({
+									success() {
+										console.log('stop success!')
+									},
+									fail() {
+										console.log('stop fail!')
+									}
+								})
 
 
 				// 当用户点击stop的时候将内存中的数据存入文件
@@ -291,10 +298,10 @@
 				// 触发定位服务许可
 				plus.geolocation.getCurrentPosition()
 
-				this.$refs.uToast.show({
-					title: 'start listen~',
-					type: 'success'
-				})
+				// this.$refs.uToast.show({
+				// 	title: 'start listen~',
+				// 	type: 'success'
+				// })
 				this.end_button = true
 				this.start_button = false
 				const self = this
@@ -325,7 +332,7 @@
 					"y,x,z,magnitude,steps/Minute,time\r\n"
 				this.orientation_header_file = header + "" + this.user_id + "," + this.user.student_number + "," + this.user.age +
 					"," + this.user.sex + "," + this.user.weight + "," + this.user.height + "\r\n" +
-					"alpha,beta,gamma,magneticHeading,trueHeading,headingAccuracy,time\r\n"
+					"x,y,z,time\r\n"
 
 				// 抽取时间的间隔
 				if (milisec === 33) {
@@ -384,47 +391,47 @@
 					frequency: milisec
 				}); // 设置更新间隔时间为 milisec ms
 
-				// 方向监听器时间缓存
-				var time_orientation_cache = 0
 
-				// 定义用于方位器监听器的时间变量
-				var date_for_orientation = new Date()
-				// 方位器时间阈值
-				var ori_thsorld = 0
-
-				// 监听设备的方向和定位
-				this.orientation_wid = plus.orientation.watchOrientation(function(rotation) {
-						// 更新时间阈值
-						if(ori_thsorld > 5000){
-							date_for_orientation = new Date()
-							ori_thsorld = 0
-						}else{
-							ori_thsorld += 33
-						}
+				// 将方向传感器改成角速度传感器
+				uni.onGyroscopeChange((res) => {
 						
 						// time_orientation_cache += milisec
 						// 拼接字符串
-						self.orientation_cache += add_a_row_orientation_without_position(rotation, date_for_orientation, milisec)
+						this.orientation_cache += add_a_row_angular_velocity(res)
 						// 展示数据
-						self.alpha_z = rotation.alpha
-						self.beta_x = rotation.beta
-						self.gama_y = rotation.gamma
-						console.log('x is ' + rotation.alpha + ' y is ' + rotation.beta + ' z is ' + rotation.gamma)
-
+						this.x = res.x
+						this.y = res.y
+						this.z = res.z
+						this.$refs.uToast.show({
+							title: 'change',
+							type: 'success'
+						})
+						
 						// 数据存储
-						if (self.orientation_cache.length >= 800000) {
+						if (this.orientation_cache.length >= 800000) {
 							// 当字符串长度大于1000000时，也就是存储大于60kb时
-							var storage_data_orientation = self.orientation_cache // 设置存储副本
-							self.orientation_cache = '' // 清空缓存
-							file_writer(self.user_id, storage_data_orientation, self.orientation_header_file, 'orientation', self.time_type)
+							var storage_data_orientation = this.orientation_cache // 设置存储副本
+							this.orientation_cache = '' // 清空缓存
+							file_writer(this.user_id, storage_data_orientation, this.orientation_header_file, 'orientation', '50HZ')
 						}
-
-					},
-					function(e) {
-						plus.nativeUI.alert("watchAcceleration error: " + JSON.stringify(e));
-					}, {
-						frequency: milisec
 					})
+				uni.startGyroscope({
+						interval: "game",
+						success() {
+							console.log('success')
+							this.$refs.uToast.show({
+								title: 'success start',
+								type: 'success'
+							})
+						},
+						fail() {
+							this.$refs.uToast.show({
+								title: 'start failed',
+								type: 'error'
+							})
+						}
+					})
+				
 			},
 			// 蓝牙方法
 			connect_device() {
