@@ -39,7 +39,7 @@
 				z: {{z}}
 			</u-col>
 		</u-row>
-		
+
 		<u-row>
 			<u-col>
 				<scroll-view :scroll-top="scrollTop" scroll-y="true" class="scroll-Y">
@@ -47,7 +47,7 @@
 				</scroll-view>
 			</u-col>
 		</u-row>
-		
+
 
 		<u-row gutter="10" justify="around">
 			<u-col span="4">
@@ -74,6 +74,9 @@
 			</u-col> -->
 			<u-col span="4">
 				<u-button class="button_1" @click="stop_listen" :disabled="!end_button" size="medium">Stop listen</u-button>
+			</u-col>
+			<u-col span="4">
+				<u-button class="button_1" type="info" @click="test">Test</u-button>
 			</u-col>
 			<!-- <u-col span="4">
 				<u-button class="button_1" @click="test_diretory"  size="medium">test_diretory</u-button>
@@ -129,7 +132,7 @@
 	import {
 		BLE_file_writer
 	} from './file_helper.js'
-	
+
 	export default {
 		data() {
 			return {
@@ -166,32 +169,32 @@
 				/*
 				蓝牙相关数据
 				*/
-			   // DeviceId: "3C:A5:49:DE:83:BE",
-			   DeviceId: "3C:A5:4A:E4:06:18",
-			   serviceId: '0000FFE0-0000-1000-8000-00805F9B34FB',
-			   characteristicId: "0000FFE1-0000-1000-8000-00805F9B34FB",
-			   // log模块
-			   logPlace: '',
-			   // 用户信息
-			   userInfo: {
-			   	username: "Song Zihan",
-			   	header: "data1,data2,time\r\n",
-			   	file_type: "Pressure",
-			   },
-			   // 数据
-			   data: '',
-			   // 表示连接状态
-			   connectStatus: 'primary',
-			   // 表示按钮文字
-			   connectText: 'Connect Device',
-			   // 停止按钮的状态
-			   stopButton: true,
-			   startButton: false,
-			   // 滚动条
-			   scrollTop:0,
-			   // 校准时间的全局变量
-			   thresholds: 0,
-			   pressure_data:''
+				// DeviceId: "3C:A5:49:DE:83:BE",
+				DeviceId: "3C:A5:4A:E4:06:18",
+				serviceId: '0000FFE0-0000-1000-8000-00805F9B34FB',
+				characteristicId: "0000FFE1-0000-1000-8000-00805F9B34FB",
+				// log模块
+				logPlace: '',
+				// 用户信息
+				userInfo: {
+					username: "Song Zihan",
+					header: "data1,data2,time\r\n",
+					file_type: "Pressure",
+				},
+				// 数据
+				data: '',
+				// 表示连接状态
+				connectStatus: 'primary',
+				// 表示按钮文字
+				connectText: 'Connect Device',
+				// 停止按钮的状态
+				stopButton: true,
+				startButton: false,
+				// 滚动条
+				scrollTop: 0,
+				// 校准时间的全局变量
+				thresholds: 0,
+				pressure_data: ''
 
 			}
 		},
@@ -266,14 +269,6 @@
 
 				// 关闭监听器
 				plus.accelerometer.clearWatch(this.wid)
-				uni.stopGyroscope({
-									success() {
-										console.log('stop success!')
-									},
-									fail() {
-										console.log('stop fail!')
-									}
-								})
 
 
 				// 当用户点击stop的时候将内存中的数据存入文件
@@ -352,10 +347,10 @@
 					self.local_y = a.yAxis
 					self.local_z = a.zAxis
 					// 更新时间阈值
-					if(time_thresold > 5000){
+					if (time_thresold > 5000) {
 						myDate = new Date()
 						time_thresold = 0
-					}else{
+					} else {
 						time_thresold += 33
 					}
 					// 计入步数 
@@ -393,46 +388,33 @@
 
 
 				// 将方向传感器改成角速度传感器
-				uni.onGyroscopeChange((res) => {
-						
-						// time_orientation_cache += milisec
-						// 拼接字符串
-						this.orientation_cache += add_a_row_angular_velocity(res)
-						// 展示数据
-						this.x = res.x
-						this.y = res.y
-						this.z = res.z
-						this.$refs.uToast.show({
-							title: 'change',
-							type: 'success'
-						})
-						
-						// 数据存储
-						if (this.orientation_cache.length >= 800000) {
-							// 当字符串长度大于1000000时，也就是存储大于60kb时
-							var storage_data_orientation = this.orientation_cache // 设置存储副本
-							this.orientation_cache = '' // 清空缓存
-							file_writer(this.user_id, storage_data_orientation, this.orientation_header_file, 'orientation', '50HZ')
-						}
-					})
-				uni.startGyroscope({
-						interval: "game",
-						success() {
-							console.log('success')
-							this.$refs.uToast.show({
-								title: 'success start',
-								type: 'success'
-							})
-						},
-						fail() {
-							this.$refs.uToast.show({
-								title: 'start failed',
-								type: 'error'
-							})
-						}
-					})
-				
+
+
 			},
+			//测试NJS
+			test() {
+				var activity = plus.android.runtimeMainActivity();
+				var Sensor = plus.android.importClass("android.hardware.Sensor");
+				var SensorManager = plus.android.importClass("android.hardware.SensorManager");
+				var Context = plus.android.importClass("android.content.Context");
+
+				var mSensorManager = activity.getSystemService(Context.SENSOR_SERVICE);
+				var mgyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+				var listener = plus.android.implements("android.hardware.SensorEventListener", {
+					onAccuracyChanged: function(sensor, accuracy) {
+
+					},
+					onSensorChanged: function(event) {
+						console.log("传感器类型：" + event.plusGetAttribute("sensor").getType());
+						console.log("当前值" + event.plusGetAttribute("values"));
+					}
+				});
+				// mSensorManager.unregisterListener(listener);
+
+				// mSensorManager.registerListener(listener, mStepDetector, SensorManager.SENSOR_DELAY_FASTEST);  
+				mSensorManager.registerListener(listener, mgyroscope, SensorManager.SENSOR_DELAY_FASTEST);
+			},
+
 			// 蓝牙方法
 			connect_device() {
 				// 连接设备
@@ -442,7 +424,7 @@
 						this.DeviceId,
 						this.serviceId,
 						this.characteristicId
-						)
+					)
 					// 订阅成功，改变按钮状态
 					this.connectStatus = 'success'
 					this.connectText = 'Connected'
@@ -478,7 +460,7 @@
 				// 关闭蓝牙连接，停止监听数据
 				helper.closeConnection(this, this.DeviceId)
 			}
-		
+
 		},
 		onUnload() {
 			// 卸载页面之后关闭各种蓝牙接口
@@ -503,14 +485,16 @@
 		margin-top: 10px;
 	}
 
-	.last_line {	
+	.last_line {
 		margin-bottom: 10px;
 	}
+
 	p {
 		white-space: pre-wrap;
 	}
-	.scroll-Y{
+
+	.scroll-Y {
 		height: 400rpx;
-		background-color:#FCBD71;
+		background-color: #FCBD71;
 	}
 </style>

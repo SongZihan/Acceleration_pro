@@ -47,14 +47,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uNavbar: __webpack_require__(/*! @/uview-ui/components/u-navbar/u-navbar.vue */ 338).default,
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
-  uAvatar: __webpack_require__(/*! @/uview-ui/components/u-avatar/u-avatar.vue */ 343).default,
-  uCellGroup: __webpack_require__(/*! @/uview-ui/components/u-cell-group/u-cell-group.vue */ 278)
-    .default,
-  uCellItem: __webpack_require__(/*! @/uview-ui/components/u-cell-item/u-cell-item.vue */ 283)
-    .default
+var components
+try {
+  components = {
+    uNavbar: __webpack_require__(/*! @/uview-ui/components/u-navbar/u-navbar.vue */ 338).default,
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
+    uAvatar: __webpack_require__(/*! @/uview-ui/components/u-avatar/u-avatar.vue */ 343).default,
+    uCellGroup: __webpack_require__(/*! @/uview-ui/components/u-cell-group/u-cell-group.vue */ 278)
+      .default,
+    uCellItem: __webpack_require__(/*! @/uview-ui/components/u-cell-item/u-cell-item.vue */ 283)
+      .default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -310,12 +329,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uButton: __webpack_require__(/*! @/uview-ui/components/u-button/u-button.vue */ 51).default,
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
-  uKeyboard: __webpack_require__(/*! @/uview-ui/components/u-keyboard/u-keyboard.vue */ 353).default,
-  uMessageInput: __webpack_require__(/*! @/uview-ui/components/u-message-input/u-message-input.vue */ 263)
-    .default
+var components
+try {
+  components = {
+    uButton: __webpack_require__(/*! @/uview-ui/components/u-button/u-button.vue */ 51).default,
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
+    uKeyboard: __webpack_require__(/*! @/uview-ui/components/u-keyboard/u-keyboard.vue */ 353)
+      .default,
+    uMessageInput: __webpack_require__(/*! @/uview-ui/components/u-message-input/u-message-input.vue */ 263)
+      .default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -537,8 +576,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+var components
+try {
+  components = {
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -835,8 +893,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+var components
+try {
+  components = {
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -1152,8 +1229,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+var components
+try {
+  components = {
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -1511,8 +1607,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+var components
+try {
+  components = {
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -1736,8 +1851,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uButton: __webpack_require__(/*! @/uview-ui/components/u-button/u-button.vue */ 51).default
+var components
+try {
+  components = {
+    uButton: __webpack_require__(/*! @/uview-ui/components/u-button/u-button.vue */ 51).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -1909,14 +2043,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uPopup: __webpack_require__(/*! @/uview-ui/components/u-popup/u-popup.vue */ 251).default,
-  uTabs: __webpack_require__(/*! @/uview-ui/components/u-tabs/u-tabs.vue */ 399).default,
-  uCellGroup: __webpack_require__(/*! @/uview-ui/components/u-cell-group/u-cell-group.vue */ 278)
-    .default,
-  uCellItem: __webpack_require__(/*! @/uview-ui/components/u-cell-item/u-cell-item.vue */ 283)
-    .default,
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+var components
+try {
+  components = {
+    uPopup: __webpack_require__(/*! @/uview-ui/components/u-popup/u-popup.vue */ 251).default,
+    uTabs: __webpack_require__(/*! @/uview-ui/components/u-tabs/u-tabs.vue */ 399).default,
+    uCellGroup: __webpack_require__(/*! @/uview-ui/components/u-cell-group/u-cell-group.vue */ 278)
+      .default,
+    uCellItem: __webpack_require__(/*! @/uview-ui/components/u-cell-item/u-cell-item.vue */ 283)
+      .default,
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -2268,9 +2421,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
-  uBadge: __webpack_require__(/*! @/uview-ui/components/u-badge/u-badge.vue */ 218).default
+var components
+try {
+  components = {
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
+    uBadge: __webpack_require__(/*! @/uview-ui/components/u-badge/u-badge.vue */ 218).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -2439,8 +2611,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+var components
+try {
+  components = {
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -2760,8 +2951,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+var components
+try {
+  components = {
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -3205,11 +3415,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uTabsSwiper: __webpack_require__(/*! @/uview-ui/components/u-tabs-swiper/u-tabs-swiper.vue */ 427)
-    .default,
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
-  uLoadmore: __webpack_require__(/*! @/uview-ui/components/u-loadmore/u-loadmore.vue */ 103).default
+var components
+try {
+  components = {
+    uTabsSwiper: __webpack_require__(/*! @/uview-ui/components/u-tabs-swiper/u-tabs-swiper.vue */ 427)
+      .default,
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
+    uLoadmore: __webpack_require__(/*! @/uview-ui/components/u-loadmore/u-loadmore.vue */ 103)
+      .default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -4786,9 +5016,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uMessageInput: __webpack_require__(/*! @/uview-ui/components/u-message-input/u-message-input.vue */ 263)
-    .default
+var components
+try {
+  components = {
+    uMessageInput: __webpack_require__(/*! @/uview-ui/components/u-message-input/u-message-input.vue */ 263)
+      .default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -4928,8 +5177,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+var components
+try {
+  components = {
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
@@ -5137,9 +5405,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components = {
-  uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
-  uPicker: __webpack_require__(/*! @/uview-ui/components/u-picker/u-picker.vue */ 448).default
+var components
+try {
+  components = {
+    uIcon: __webpack_require__(/*! @/uview-ui/components/u-icon/u-icon.vue */ 24).default,
+    uPicker: __webpack_require__(/*! @/uview-ui/components/u-picker/u-picker.vue */ 448).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
 }
 var render = function() {
   var _vm = this
